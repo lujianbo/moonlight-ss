@@ -1,4 +1,5 @@
-<configuration>
+<!-- auto update -->
+<configuration scan="true" scanPeriod="30 seconds">
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <!-- encoders are assigned the type
