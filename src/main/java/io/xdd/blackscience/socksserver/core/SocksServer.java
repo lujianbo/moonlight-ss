@@ -42,7 +42,6 @@ public final class SocksServer {
                 .handler(new LoggingHandler(LogLevel.INFO))
                 .childHandler(new SocksServerInitializer());
         b.bind(PORT).awaitUninterruptibly();
-        System.out.println("aaa");
     }
 
     public void stop(){
@@ -50,13 +49,4 @@ public final class SocksServer {
         workerGroup.shutdownGracefully();
     }
 
-    public static void main(String[] args) {
-        try {
-            new SocksServer().start();
-            Thread.sleep(600000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-    }
 }
