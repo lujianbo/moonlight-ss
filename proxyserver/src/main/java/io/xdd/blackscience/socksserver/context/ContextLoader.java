@@ -3,8 +3,6 @@ package io.xdd.blackscience.socksserver.context;
 
 import io.xdd.blackscience.socksserver.core.SocksServer;
 
-import java.util.Properties;
-
 /**
  * web context to Manager SocksServer
  * */
