@@ -25,6 +25,10 @@ public class AESCrypto {
 
     //默认的 Lv length 是16byte
 
+    public static void main(String[] args) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException {
+        new AESCrypto();
+    }
+
 
     public AESCrypto() throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException {
 
@@ -68,7 +72,7 @@ public class AESCrypto {
     private static byte[] EVP_BytesToKey(String password){
         byte[] passwordBytes=password.getBytes();
         byte[] temp = new byte[passwordBytes.length + 16];
-        byte[] result=new byte[32];
+        byte[] result=new byte[32];//32byte 的key
         int i=0;
         byte[] md5_sum=null;
         while(i<32){

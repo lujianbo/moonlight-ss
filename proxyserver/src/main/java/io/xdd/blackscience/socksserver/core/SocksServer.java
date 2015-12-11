@@ -26,22 +26,23 @@ public final class SocksServer {
 
     static final int PORT = Integer.parseInt(System.getProperty("port", "1080"));
 
-    private EventLoopGroup bossGroup;
-    private EventLoopGroup workerGroup;
+    private EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+    private EventLoopGroup workerGroup = new NioEventLoopGroup();
 
-    public SocksServer(){
-
-    }
-
-    public void start(){
-        this.bossGroup = new NioEventLoopGroup(1);
-        this.workerGroup = new NioEventLoopGroup();
-        ServerBootstrap b = new ServerBootstrap();
-        b.group(bossGroup, workerGroup)
-                .channel(NioServerSocketChannel.class)
-                .handler(new LoggingHandler(LogLevel.INFO))
-                .childHandler(new SocksServerInitializer());
-        b.bind(PORT).awaitUninterruptibly();
+    public void start() {
+       try {
+           ServerBootstrap b = new ServerBootstrap();
+           b.group(bossGroup, workerGroup)
+                   .channel(NioServerSocketChannel.class)
+                   .handler(new LoggingHandler(LogLevel.INFO))
+                   .childHandler(new SocksServerInitializer());
+           b.bind(PORT).sync().channel().closeFuture().sync();
+       } catch (Exception e) {
+           e.printStackTrace();
+       } finally {
+           bossGroup.shutdownGracefully();
+           workerGroup.shutdownGracefully();
+       }
     }
 
     public void stop(){
