@@ -52,10 +52,14 @@ public class AESCrypto {
         return encryptCipher;
     }
 
-
+    /**
+     * 返回随机IV
+     * */
     private static IvParameterSpec generatorIvParameter(){
-        IvParameterSpec ivParameterSpec=null;
-        return ivParameterSpec;
+        SecureRandom random = new SecureRandom();
+        byte[] bytes = new byte[16];
+        random.nextBytes(bytes);
+        return new IvParameterSpec(bytes);
     }
 
     /**
