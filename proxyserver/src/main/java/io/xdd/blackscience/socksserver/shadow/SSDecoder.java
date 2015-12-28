@@ -9,7 +9,6 @@ import java.util.List;
 
 public class SSDecoder extends ReplayingDecoder<SSInitPackage> {
 
-
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
 

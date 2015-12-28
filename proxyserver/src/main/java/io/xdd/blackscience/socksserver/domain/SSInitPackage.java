@@ -6,7 +6,6 @@ public class SSInitPackage {
     private static final byte IPV6=4;
     private static final byte HOSTNAME =3;
 
-
     private byte type;
 
     private byte[] destinationAddress;
@@ -14,4 +13,6 @@ public class SSInitPackage {
     private byte[] destinationPort;
 
     private byte[] data;
+
+
 }
