@@ -29,8 +29,19 @@ public final class SocksServerInitializer extends ChannelInitializer<SocketChann
     @Override
     public void initChannel(SocketChannel socketChannel) throws Exception {
         ChannelPipeline p = socketChannel.pipeline();
+        /**
+         * Socks request 解码
+         * */
         p.addLast(new SocksInitRequestDecoder());
+
+        /**
+         * socks 编码
+         * */
         p.addLast(socksMessageEncoder);
+
+        /**
+         * 数据处理
+         * */
         p.addLast(socksServerHandler);
     }
 }
