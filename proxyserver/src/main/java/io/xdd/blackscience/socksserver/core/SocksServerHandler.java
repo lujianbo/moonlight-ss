@@ -18,14 +18,7 @@ package io.xdd.blackscience.socksserver.core;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.socks.SocksAuthResponse;
-import io.netty.handler.codec.socks.SocksAuthScheme;
-import io.netty.handler.codec.socks.SocksAuthStatus;
-import io.netty.handler.codec.socks.SocksCmdRequest;
-import io.netty.handler.codec.socks.SocksCmdRequestDecoder;
-import io.netty.handler.codec.socks.SocksCmdType;
-import io.netty.handler.codec.socks.SocksInitResponse;
-import io.netty.handler.codec.socks.SocksRequest;
+import io.netty.handler.codec.socks.*;
 
 
 @ChannelHandler.Sharable

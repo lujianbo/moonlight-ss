@@ -23,7 +23,7 @@ public class ShadowSocksEncoder extends MessageToByteEncoder<ShadowSocksMessage>
      * */
     private short destinationPort;
 
-
+    private boolean isSent=false;
 
     public ShadowSocksEncoder(byte addressType, byte[] address, short destinationPort) {
         this.addressType = addressType;
@@ -33,6 +33,10 @@ public class ShadowSocksEncoder extends MessageToByteEncoder<ShadowSocksMessage>
 
     @Override
     protected void encode(ChannelHandlerContext ctx, ShadowSocksMessage msg, ByteBuf out) throws Exception {
+        //判断数据的头部是否已经发送
 
+        //没有发送则发送头部数据
+
+        //已经发送则不发送头部数据
     }
 }
