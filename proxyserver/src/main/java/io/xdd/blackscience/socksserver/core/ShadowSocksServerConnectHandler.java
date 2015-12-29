@@ -23,6 +23,8 @@ public class ShadowSocksServerConnectHandler extends SimpleChannelInboundHandler
         this.ssPort=ssPort;
     }
 
+    public ShadowSocksServerConnectHandler(){}
+
     @Override
     public void channelRead0(final ChannelHandlerContext ctx, final SocksCmdRequest request) throws Exception {
         Promise<Channel> promise = ctx.executor().newPromise();
@@ -63,6 +65,7 @@ public class ShadowSocksServerConnectHandler extends SimpleChannelInboundHandler
                 .channel(NioSocketChannel.class)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
                 .option(ChannelOption.SO_KEEPALIVE, true)
+                //把promise设置到Handler中来触发promise
                 .handler(new DirectClientHandler(promise));
 
         /**
@@ -75,8 +78,7 @@ public class ShadowSocksServerConnectHandler extends SimpleChannelInboundHandler
                     // Connection established use handler provided results
                 } else {
                     // Close the connection if the connection attempt has failed.
-                    ctx.channel().writeAndFlush(
-                            new SocksCmdResponse(SocksCmdStatus.FAILURE, request.addressType()));
+                    ctx.channel().writeAndFlush(new SocksCmdResponse(SocksCmdStatus.FAILURE, request.addressType()));
                     SocksServerUtils.closeOnFlush(ctx.channel());
                 }
             }

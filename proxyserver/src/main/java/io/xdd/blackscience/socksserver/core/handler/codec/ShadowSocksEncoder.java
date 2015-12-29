@@ -25,11 +25,6 @@ public class ShadowSocksEncoder extends MessageToByteEncoder<ShadowSocksMessage>
 
     private boolean isSent=false;
 
-    public ShadowSocksEncoder(byte addressType, byte[] address, short destinationPort) {
-        this.addressType = addressType;
-        this.address = address;
-        this.destinationPort = destinationPort;
-    }
 
     @Override
     protected void encode(ChannelHandlerContext ctx, ShadowSocksMessage msg, ByteBuf out) throws Exception {
