@@ -21,6 +21,10 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.socks.SocksInitRequestDecoder;
 import io.netty.handler.codec.socks.SocksMessageEncoder;
 
+
+/**
+ * Socks 协议连接的统一处理类
+ * */
 public final class SocksServerInitializer extends ChannelInitializer<SocketChannel> {
 
     private final SocksMessageEncoder socksMessageEncoder = new SocksMessageEncoder();

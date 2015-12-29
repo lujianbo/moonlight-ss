@@ -20,11 +20,14 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.concurrent.Promise;
 
-public final class DirectClientHandler extends ChannelInboundHandlerAdapter {
+/**
+ *  一个辅助Handler用于激活 远程连接的 promise
+ * */
+public final class PromiseHandler extends ChannelInboundHandlerAdapter {
 
     private final Promise<Channel> promise;
 
-    public DirectClientHandler(Promise<Channel> promise) {
+    public PromiseHandler(Promise<Channel> promise) {
         this.promise = promise;
     }
 

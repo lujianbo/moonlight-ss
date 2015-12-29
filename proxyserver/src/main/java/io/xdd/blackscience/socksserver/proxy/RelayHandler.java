@@ -20,9 +20,10 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
+import io.xdd.blackscience.socksserver.proxy.utils.SocksServerUtils;
 
 /**
- *
+ * 中继处理,用于回复 socks的 channel
  * */
 public final class RelayHandler extends ChannelInboundHandlerAdapter {
 

@@ -19,6 +19,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.socks.*;
+import io.xdd.blackscience.socksserver.proxy.utils.SocksServerUtils;
 
 
 @ChannelHandler.Sharable
@@ -42,7 +43,10 @@ public final class SocksServerHandler extends SimpleChannelInboundHandler<SocksR
             case CMD:
                 SocksCmdRequest req = (SocksCmdRequest) socksRequest;
                 if (req.cmdType() == SocksCmdType.CONNECT) {
-                    ctx.pipeline().addLast(new SocksServerConnectHandler());
+                    /**
+                     * 切换进入代理模式
+                     * */
+                    ctx.pipeline().addLast(new ProxyConnectHandler());
                     ctx.pipeline().remove(this);
                     ctx.fireChannelRead(socksRequest);
                 } else {

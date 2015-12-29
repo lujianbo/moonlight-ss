@@ -3,27 +3,41 @@ package io.xdd.blackscience.socksserver.proxy;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.socks.SocksAddressType;
 import io.netty.handler.codec.socks.SocksCmdRequest;
 import io.netty.handler.codec.socks.SocksCmdResponse;
 import io.netty.handler.codec.socks.SocksCmdStatus;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.Promise;
+import io.xdd.blackscience.socksserver.proxy.handler.codec.ShadowSocksAddressType;
+import io.xdd.blackscience.socksserver.proxy.handler.codec.ShadowSocksServerConnectInitializer;
+import io.xdd.blackscience.socksserver.proxy.utils.SocksServerUtils;
 
-public class ShadowSocksServerConnectHandler extends SimpleChannelInboundHandler<SocksCmdRequest> {
+import javax.crypto.NoSuchPaddingException;
+import java.net.SocketAddress;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+
+/**
+ * 代理连接类, 通过该 Handler 完成到目标代理服务器的连接
+ * */
+public class ProxyConnectHandler extends SimpleChannelInboundHandler<SocksCmdRequest> {
 
     private final Bootstrap b = new Bootstrap();
 
-    private String ssHost;
+    private SocketAddress socketAddress;
 
-    private short ssPort;
+    private String password;
 
-    public ShadowSocksServerConnectHandler(String ssHost,short ssPort){
-        this.ssHost=ssHost;
-        this.ssPort=ssPort;
+    public ProxyConnectHandler(SocketAddress socketAddress, String password){
+        this.socketAddress=socketAddress;
+        this.password = password;
     }
 
-    public ShadowSocksServerConnectHandler(){}
+    public ProxyConnectHandler(){}
 
     @Override
     public void channelRead0(final ChannelHandlerContext ctx, final SocksCmdRequest request) throws Exception {
@@ -40,15 +54,20 @@ public class ShadowSocksServerConnectHandler extends SimpleChannelInboundHandler
                                         /**
                                          * 移除当前的处理数据
                                          * */
-                                        ctx.pipeline().remove(ShadowSocksServerConnectHandler.this);
+                                        ctx.pipeline().remove(ProxyConnectHandler.this);
+                                        /**
+                                         * 设置 ctx数据的处理方式
+                                         * */
+                                        ctx.pipeline().addLast(new RelayHandler(outboundChannel));
+
                                         /**
                                          * 设置 outboundChannel
                                          * */
                                         outboundChannel.pipeline().addLast(new RelayHandler(ctx.channel()));
-                                        /**
-                                         * 调整连接后调整到 Relay 模式
-                                         * */
-                                        ctx.pipeline().addLast(new RelayHandler(outboundChannel));
+
+
+                                        outboundChannel.pipeline().addLast(getHandler(request));
+
                                     });
                         } else {
                             ctx.channel().writeAndFlush(new SocksCmdResponse(SocksCmdStatus.FAILURE, request.addressType()));
@@ -66,12 +85,12 @@ public class ShadowSocksServerConnectHandler extends SimpleChannelInboundHandler
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 //把promise设置到Handler中来触发promise
-                .handler(new DirectClientHandler(promise));
+                .handler(new PromiseHandler(promise));
 
         /**
          * 连接目标服务器
          * */
-        b.connect(ssHost, ssPort).addListener(new ChannelFutureListener() {
+        b.connect(socketAddress).addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
                 if (future.isSuccess()) {
@@ -89,4 +108,28 @@ public class ShadowSocksServerConnectHandler extends SimpleChannelInboundHandler
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         SocksServerUtils.closeOnFlush(ctx.channel());
     }
+
+
+    private ShadowSocksServerConnectInitializer getHandler(SocksCmdRequest request) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException {
+        SocksAddressType addressType=request.addressType();
+        String host=request.host();
+        short port= (short) request.port();
+        ShadowSocksServerConnectInitializer serverConnectInitializer = null;
+        switch (addressType) {
+            case IPv4: {
+                serverConnectInitializer=new ShadowSocksServerConnectInitializer(password,ShadowSocksAddressType.IPv4,host,port);
+                break;
+            }
+            case DOMAIN: {
+                serverConnectInitializer=new ShadowSocksServerConnectInitializer(password,ShadowSocksAddressType.hostname,host,port);
+                break;
+            }
+            case IPv6: {
+                serverConnectInitializer=new ShadowSocksServerConnectInitializer(password,ShadowSocksAddressType.IPv6,host,port);
+                break;
+            }
+        }
+        return serverConnectInitializer;
+    }
+
 }

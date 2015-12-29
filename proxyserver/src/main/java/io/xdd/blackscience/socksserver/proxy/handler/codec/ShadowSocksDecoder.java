@@ -1,21 +1,26 @@
 package io.xdd.blackscience.socksserver.proxy.handler.codec;
 
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.ReplayingDecoder;
-import io.xdd.blackscience.socksserver.proxy.handler.codec.ShadowSocksDecoder.State;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 
-import java.util.List;
-
-public class ShadowSocksDecoder extends ReplayingDecoder<State> {
+import javax.crypto.Cipher;
 
 
-    @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+public class ShadowSocksDecoder extends ChannelInboundHandlerAdapter {
 
+    private transient final Cipher decryptCipher;
+
+    public ShadowSocksDecoder(Cipher decryptCipher) {
+        this.decryptCipher = decryptCipher;
     }
 
-    enum State {
-
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        ByteBuf in= (ByteBuf) msg;
+        ByteBuf decrypt=ctx.alloc().buffer(in.capacity());
+        decryptCipher.update(in.nioBuffer(),decrypt.nioBuffer());
+        ctx.fireChannelRead(decrypt);
     }
 }

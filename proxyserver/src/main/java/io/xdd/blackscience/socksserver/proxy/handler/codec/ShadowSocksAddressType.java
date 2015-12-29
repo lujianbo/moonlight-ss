@@ -4,7 +4,7 @@ package io.xdd.blackscience.socksserver.proxy.handler.codec;
 /**
  * 地址类型的协议标准规范
  * */
-public enum ShadowSocksAddressTypeScheme {
+public enum ShadowSocksAddressType {
 
     IPv4((byte) 0x01),
     IPv6((byte) 0x02),
@@ -13,12 +13,12 @@ public enum ShadowSocksAddressTypeScheme {
 
     private final byte b;
 
-    ShadowSocksAddressTypeScheme(byte b) {
+    ShadowSocksAddressType(byte b) {
         this.b = b;
     }
 
-    public static ShadowSocksAddressTypeScheme valueOf(byte b) {
-        for (ShadowSocksAddressTypeScheme code : values()) {
+    public static ShadowSocksAddressType valueOf(byte b) {
+        for (ShadowSocksAddressType code : values()) {
             if (code.b == b) {
                 return code;
             }
