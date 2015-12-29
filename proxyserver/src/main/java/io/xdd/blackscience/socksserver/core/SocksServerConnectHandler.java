@@ -49,8 +49,18 @@ public final class SocksServerConnectHandler extends SimpleChannelInboundHandler
                             .addListener(new ChannelFutureListener() {
                                 @Override
                                 public void operationComplete(ChannelFuture channelFuture) {
+
+                                    /**
+                                     * 移除当前的处理数据
+                                     * */
                                     ctx.pipeline().remove(SocksServerConnectHandler.this);
+                                    /**
+                                     * 设置 outboundChannel
+                                     * */
                                     outboundChannel.pipeline().addLast(new RelayHandler(ctx.channel()));
+                                    /**
+                                     * 调整连接后调整到 Relay 模式
+                                     * */
                                     ctx.pipeline().addLast(new RelayHandler(outboundChannel));
                                 }
                             });
@@ -61,6 +71,9 @@ public final class SocksServerConnectHandler extends SimpleChannelInboundHandler
             }
         });
 
+        /**
+         * 配置Handler
+         * */
         final Channel inboundChannel = ctx.channel();
         b.group(inboundChannel.eventLoop())
                 .channel(NioSocketChannel.class)
@@ -68,6 +81,9 @@ public final class SocksServerConnectHandler extends SimpleChannelInboundHandler
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .handler(new DirectClientHandler(promise));
 
+        /**
+         * 连接目标服务器
+         * */
         b.connect(request.host(), request.port()).addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {

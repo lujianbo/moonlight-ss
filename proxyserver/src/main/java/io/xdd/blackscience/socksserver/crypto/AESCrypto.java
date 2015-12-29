@@ -23,17 +23,10 @@ public class AESCrypto {
 
     private transient final Cipher decryptCipher;
 
-    //默认的 Lv length 是16byte
 
-    public static void main(String[] args) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException {
-        new AESCrypto();
-    }
+    public AESCrypto(String password) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException {
 
-
-    public AESCrypto() throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException {
-
-        String password="password";
-        SecretKey secretKey=generatorKey("password");
+        SecretKey secretKey=generatorKey(password);
         IvParameterSpec ivParameterSpec=generatorIvParameter();
 
         encryptCipher = Cipher.getInstance("AES/CFB/NoPadding");
