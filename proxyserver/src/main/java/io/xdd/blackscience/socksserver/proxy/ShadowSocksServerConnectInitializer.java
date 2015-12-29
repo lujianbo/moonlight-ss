@@ -1,10 +1,10 @@
-package io.xdd.blackscience.socksserver.core;
+package io.xdd.blackscience.socksserver.proxy;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
-import io.xdd.blackscience.socksserver.core.handler.codec.ShadowSocksDecoder;
-import io.xdd.blackscience.socksserver.core.handler.codec.ShadowSocksEncoder;
+import io.xdd.blackscience.socksserver.proxy.handler.codec.ShadowSocksDecoder;
+import io.xdd.blackscience.socksserver.proxy.handler.codec.ShadowSocksEncoder;
 
 public class ShadowSocksServerConnectInitializer extends ChannelInitializer<SocketChannel> {
 

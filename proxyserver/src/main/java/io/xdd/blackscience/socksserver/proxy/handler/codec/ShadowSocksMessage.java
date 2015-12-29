@@ -1,6 +1,4 @@
-package io.xdd.blackscience.socksserver.core.handler.codec;
-
-import java.util.IllegalFormatException;
+package io.xdd.blackscience.socksserver.proxy.handler.codec;
 
 public class ShadowSocksMessage {
 

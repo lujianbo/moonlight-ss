@@ -1,7 +1,7 @@
 package io.xdd.blackscience.socksserver.context;
 
 
-import io.xdd.blackscience.socksserver.core.SocksServer;
+import io.xdd.blackscience.socksserver.proxy.SocksServer;
 
 /**
  * web context to Manager SocksServer

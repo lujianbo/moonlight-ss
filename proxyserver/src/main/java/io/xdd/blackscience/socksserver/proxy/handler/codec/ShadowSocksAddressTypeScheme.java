@@ -1,4 +1,4 @@
-package io.xdd.blackscience.socksserver.core.handler.codec;
+package io.xdd.blackscience.socksserver.proxy.handler.codec;
 
 
 /**

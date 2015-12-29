@@ -1,4 +1,4 @@
-package io.xdd.blackscience.socksserver.core.handler;
+package io.xdd.blackscience.socksserver.proxy.handler;
 
 /**
  * 服务器状态处理器

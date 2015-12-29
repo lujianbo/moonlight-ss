@@ -1,4 +1,4 @@
-package io.xdd.blackscience.socksserver.core;
+package io.xdd.blackscience.socksserver.proxy;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
