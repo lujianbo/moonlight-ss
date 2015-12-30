@@ -28,10 +28,10 @@ public class AESCrypto {
         SecretKey secretKey=generatorKey(password,keyLength);
         IvParameterSpec ivParameterSpec=generatorIvParameter(ivLength);
 
-        encryptCipher = Cipher.getInstance("AES/CFB/NoPadding");
+        encryptCipher = Cipher.getInstance("AES/CFB8/NoPadding");
         encryptCipher.init(Cipher.ENCRYPT_MODE,secretKey,ivParameterSpec);
 
-        decryptCipher = Cipher.getInstance("AES/CFB/NoPadding");
+        decryptCipher = Cipher.getInstance("AES/CFB8/NoPadding");
         decryptCipher.init(Cipher.DECRYPT_MODE,secretKey,ivParameterSpec);
 
     }
@@ -58,7 +58,7 @@ public class AESCrypto {
     /**
      * 返回随机IV
      * */
-    private static IvParameterSpec generatorIvParameter(int length){
+    public static IvParameterSpec generatorIvParameter(int length){
         SecureRandom random = new SecureRandom();
         byte[] bytes = new byte[length];
         random.nextBytes(bytes);
@@ -68,7 +68,7 @@ public class AESCrypto {
     /**
      * 将password 生成到 256bit的key
      * */
-    private static SecretKey generatorKey(String password,int keyLength) throws NoSuchAlgorithmException {
+    public static SecretKey generatorKey(String password,int keyLength) throws NoSuchAlgorithmException {
         byte[] key=EVP_BytesToKey(password,keyLength);
         return new SecretKeySpec(key,"AES");
     }
@@ -76,7 +76,7 @@ public class AESCrypto {
     /**
      * MD5 迭代 password直到 长度满足 key_len
      * */
-    private static byte[] EVP_BytesToKey(String password,int length){
+    public static byte[] EVP_BytesToKey(String password,int length){
         byte[] passwordBytes=password.getBytes();
         byte[] temp = new byte[passwordBytes.length + 16];
         byte[] result=new byte[length];//32byte 的key

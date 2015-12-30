@@ -42,7 +42,7 @@ public class FontendServerConnectHandler extends SimpleChannelInboundHandler<Soc
     @Override
     public void channelRead0(final ChannelHandlerContext ctx, final SocksCmdRequest request) throws Exception {
         ShadowSocksServerInstance instance=shadowSocksServerManager.getOne();
-        AESCrypto aesCrypto=new AESCrypto(instance.getPassword(),256,32);
+        AESCrypto aesCrypto=new AESCrypto(instance.getPassword(),32,16);
 
         Promise<Channel> promise = ctx.executor().newPromise();
         promise.addListener(
