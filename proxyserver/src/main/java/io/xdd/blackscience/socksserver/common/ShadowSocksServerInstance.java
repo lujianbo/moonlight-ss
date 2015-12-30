@@ -8,7 +8,7 @@ public class ShadowSocksServerInstance {
 
     private String address;
 
-    private short port;
+    private int port;
 
     private String method;
 
@@ -22,11 +22,11 @@ public class ShadowSocksServerInstance {
         this.address = address;
     }
 
-    public short getPort() {
+    public int getPort() {
         return port;
     }
 
-    public void setPort(short port) {
+    public void setPort(int port) {
         this.port = port;
     }
 
