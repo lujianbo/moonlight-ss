@@ -21,13 +21,15 @@ public class ShadowSocksRequest {
     /**
      * 目标端口
      * */
-    private short port;
+    private int port;
 
-    public ShadowSocksRequest(ShadowSocksAddressType addressType, String host, short port) {
+    public ShadowSocksRequest(ShadowSocksAddressType addressType, String host, int port) {
         this.addressType = addressType;
         this.host = host;
         this.port = port;
     }
+
+
 
     public void encodeAsByteBuf(ByteBuf byteBuf){
         byteBuf.writeByte(addressType.byteValue());

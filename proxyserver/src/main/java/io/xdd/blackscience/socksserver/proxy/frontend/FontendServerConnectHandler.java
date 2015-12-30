@@ -1,4 +1,4 @@
-package io.xdd.blackscience.socksserver.proxy;
+package io.xdd.blackscience.socksserver.proxy.frontend;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -22,11 +22,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
-
-/**
- * 代理连接类, 通过该 Handler 完成到目标代理服务器的连接
- * */
-public class ProxyConnectHandler extends SimpleChannelInboundHandler<SocksCmdRequest> {
+public class FontendServerConnectHandler extends SimpleChannelInboundHandler<SocksCmdRequest> {
 
     private final Bootstrap b = new Bootstrap();
 
@@ -34,12 +30,12 @@ public class ProxyConnectHandler extends SimpleChannelInboundHandler<SocksCmdReq
 
     private String password;
 
-    public ProxyConnectHandler(SocketAddress socketAddress, String password){
+    public FontendServerConnectHandler(SocketAddress socketAddress, String password){
         this.socketAddress=socketAddress;
         this.password = password;
     }
 
-    public ProxyConnectHandler(){}
+    public FontendServerConnectHandler(){}
 
     @Override
     public void channelRead0(final ChannelHandlerContext ctx, final SocksCmdRequest request) throws Exception {
@@ -56,7 +52,7 @@ public class ProxyConnectHandler extends SimpleChannelInboundHandler<SocksCmdReq
                                         /**
                                          * 移除当前的处理数据
                                          * */
-                                        ctx.pipeline().remove(ProxyConnectHandler.this);
+                                        ctx.pipeline().remove(FontendServerConnectHandler.this);
                                         /**
                                          * 设置 ctx数据的处理方式
                                          * */
@@ -119,7 +115,7 @@ public class ProxyConnectHandler extends SimpleChannelInboundHandler<SocksCmdReq
         ShadowSocksServerConnectInitializer serverConnectInitializer = null;
         switch (addressType) {
             case IPv4: {
-                serverConnectInitializer=new ShadowSocksServerConnectInitializer(password,ShadowSocksAddressType.IPv4,host,port);
+                serverConnectInitializer=new ShadowSocksServerConnectInitializer(password, ShadowSocksAddressType.IPv4,host,port);
                 break;
             }
             case DOMAIN: {
@@ -133,5 +129,4 @@ public class ProxyConnectHandler extends SimpleChannelInboundHandler<SocksCmdReq
         }
         return serverConnectInitializer;
     }
-
 }

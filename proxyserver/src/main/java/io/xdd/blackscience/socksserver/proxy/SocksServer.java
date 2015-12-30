@@ -7,7 +7,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
-
 /**
  *  socks 服务器的启动类
  * */

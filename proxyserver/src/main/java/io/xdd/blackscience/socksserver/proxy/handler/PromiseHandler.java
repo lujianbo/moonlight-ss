@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package io.xdd.blackscience.socksserver.proxy;
+package io.xdd.blackscience.socksserver.proxy.handler;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
