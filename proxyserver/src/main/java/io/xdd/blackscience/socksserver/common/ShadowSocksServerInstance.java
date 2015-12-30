@@ -1,6 +1,10 @@
 package io.xdd.blackscience.socksserver.common;
 
-public class ShadowSocksProxyServerSpec {
+
+/**
+ * 一个服务器实例的描述
+ * */
+public class ShadowSocksServerInstance {
 
     private String address;
 

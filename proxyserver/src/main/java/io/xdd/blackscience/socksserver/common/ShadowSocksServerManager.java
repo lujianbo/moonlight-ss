@@ -10,7 +10,13 @@ public class ShadowSocksServerManager {
     /**
      * 返回一个最佳的服务器地址
      * */
-    public ShadowSocksProxyServerSpec getOne(){
+    public ShadowSocksServerInstance getOne(){
         return null;
+    }
+
+    private static ShadowSocksServerManager ourInstance = new ShadowSocksServerManager();
+
+    public static ShadowSocksServerManager getInstance() {
+        return ourInstance;
     }
 }

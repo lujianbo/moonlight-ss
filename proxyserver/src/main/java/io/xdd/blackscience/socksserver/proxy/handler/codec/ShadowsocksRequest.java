@@ -29,8 +29,6 @@ public class ShadowSocksRequest {
         this.port = port;
     }
 
-
-
     public void encodeAsByteBuf(ByteBuf byteBuf){
         byteBuf.writeByte(addressType.byteValue());
         switch (addressType) {
@@ -53,5 +51,14 @@ public class ShadowSocksRequest {
                 break;
             }
         }
+    }
+
+
+    public String host(){
+        return host;
+    }
+
+    public int port(){
+        return port;
     }
 }

@@ -24,10 +24,10 @@ public class AESCrypto {
     private transient final Cipher decryptCipher;
 
 
-    public AESCrypto(String password) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException {
+    public AESCrypto(String password,int keyLength,int ivLength) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException {
 
-        SecretKey secretKey=generatorKey(password);
-        IvParameterSpec ivParameterSpec=generatorIvParameter();
+        SecretKey secretKey=generatorKey(password,keyLength);
+        IvParameterSpec ivParameterSpec=generatorIvParameter(ivLength);
 
         encryptCipher = Cipher.getInstance("AES/CFB/NoPadding");
         encryptCipher.init(Cipher.ENCRYPT_MODE,secretKey,ivParameterSpec);
@@ -48,9 +48,9 @@ public class AESCrypto {
     /**
      * 返回随机IV
      * */
-    private static IvParameterSpec generatorIvParameter(){
+    private static IvParameterSpec generatorIvParameter(int length){
         SecureRandom random = new SecureRandom();
-        byte[] bytes = new byte[16];
+        byte[] bytes = new byte[length];
         random.nextBytes(bytes);
         return new IvParameterSpec(bytes);
     }
@@ -58,18 +58,18 @@ public class AESCrypto {
     /**
      * 将password 生成到 256bit的key
      * */
-    private static SecretKey generatorKey(String password) throws NoSuchAlgorithmException {
-        byte[] key=EVP_BytesToKey(password);
+    private static SecretKey generatorKey(String password,int keyLength) throws NoSuchAlgorithmException {
+        byte[] key=EVP_BytesToKey(password,keyLength);
         return new SecretKeySpec(key,"AES");
     }
 
     /**
      * MD5 迭代 password直到 长度满足 key_len
      * */
-    private static byte[] EVP_BytesToKey(String password){
+    private static byte[] EVP_BytesToKey(String password,int length){
         byte[] passwordBytes=password.getBytes();
         byte[] temp = new byte[passwordBytes.length + 16];
-        byte[] result=new byte[32];//32byte 的key
+        byte[] result=new byte[length];//32byte 的key
         int i=0;
         byte[] md5_sum=null;
         while(i<result.length){

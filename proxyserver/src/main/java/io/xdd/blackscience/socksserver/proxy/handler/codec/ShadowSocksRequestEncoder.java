@@ -2,23 +2,12 @@ package io.xdd.blackscience.socksserver.proxy.handler.codec;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelOutboundHandlerAdapter;
-import io.netty.channel.ChannelPromise;
+import io.netty.handler.codec.MessageToByteEncoder;
 
-public class ShadowSocksRequestEncoder extends ChannelOutboundHandlerAdapter {
-
-    private ShadowSocksRequest request;
-
-    public ShadowSocksRequestEncoder(ShadowSocksRequest request){
-        this.request=request;
-    }
+public class ShadowSocksRequestEncoder extends MessageToByteEncoder<ShadowSocksRequest> {
 
     @Override
-    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-        ByteBuf temp = ctx.alloc().buffer(4);
-        request.encodeAsByteBuf(temp);
-        //该编码只执行一次，执行后将自身移除
-        ctx.pipeline().remove(this);
-        ctx.write(temp,promise);
+    protected void encode(ChannelHandlerContext ctx, ShadowSocksRequest request, ByteBuf out) throws Exception {
+        request.encodeAsByteBuf(out);
     }
 }

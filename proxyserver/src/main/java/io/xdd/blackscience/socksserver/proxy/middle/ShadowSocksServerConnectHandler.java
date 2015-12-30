@@ -21,7 +21,6 @@ public class ShadowSocksServerConnectHandler extends ChannelOutboundHandlerAdapt
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
         //输出 iv
 
-
         //然后
         ctx.pipeline().remove(this);
         //加密和解密
