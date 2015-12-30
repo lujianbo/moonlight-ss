@@ -1,25 +1,25 @@
 package io.xdd.blackscience.socksserver.context;
 
 
-import io.xdd.blackscience.socksserver.proxy.SocksServer;
+import io.xdd.blackscience.socksserver.proxy.ProxyServer;
 
 /**
- * web context to Manager SocksServer
+ * web context to Manager ProxyServer
  * */
 public class ContextLoader{
 
-    private SocksServer socksServer;
+    private ProxyServer proxyServer;
 
     public void initSocksServer() {
-        if (socksServer==null){
-            socksServer=new SocksServer();
-            socksServer.start();
-        }
+//        if (proxyServer==null){
+//            proxyServer=new ProxyServer();
+//            proxyServer.start();
+//        }
     }
 
     public void closeSocksServer(){
-        if (socksServer!=null){
-            socksServer.stop();
+        if (proxyServer !=null){
+            proxyServer.stop();
         }
     }
 }

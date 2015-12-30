@@ -6,6 +6,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
+import io.xdd.blackscience.socksserver.proxy.utils.BytebufCipherUtil;
 import io.xdd.blackscience.socksserver.proxy.utils.SocksServerUtils;
 
 import javax.crypto.Cipher;
@@ -29,7 +30,10 @@ public final class CipherRelayHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         if (relayChannel.isActive()) {
-            relayChannel.writeAndFlush(msg);
+            ByteBuf in= (ByteBuf) msg;
+            ByteBuf out=ctx.alloc().buffer(in.capacity());
+            BytebufCipherUtil.update(cipher,in,out);//update 解密
+            relayChannel.writeAndFlush(out);//想relayChanel写入处理过的数据
         } else {
             ReferenceCountUtil.release(msg);
         }

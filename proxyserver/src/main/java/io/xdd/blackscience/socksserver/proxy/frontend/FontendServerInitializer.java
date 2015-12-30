@@ -1,16 +1,17 @@
 package io.xdd.blackscience.socksserver.proxy.frontend;
 
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.socks.SocksInitRequestDecoder;
 import io.netty.handler.codec.socks.SocksMessageEncoder;
-import io.xdd.blackscience.socksserver.proxy.SocksServerHandler;
 
+@ChannelHandler.Sharable
 public class FontendServerInitializer extends ChannelInitializer<SocketChannel> {
 
     private final SocksMessageEncoder socksMessageEncoder = new SocksMessageEncoder();
-    private final SocksServerHandler socksServerHandler = new SocksServerHandler();
+    private final FrontendServerHandler frontendServerHandler = new FrontendServerHandler();
 
 
     @Override
@@ -29,6 +30,6 @@ public class FontendServerInitializer extends ChannelInitializer<SocketChannel> 
         /**
          * 数据处理
          * */
-        p.addLast(socksServerHandler);
+        p.addLast(frontendServerHandler);
     }
 }

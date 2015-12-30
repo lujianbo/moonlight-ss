@@ -72,7 +72,7 @@ public class AESCrypto {
         byte[] result=new byte[32];//32byte 的key
         int i=0;
         byte[] md5_sum=null;
-        while(i<32){
+        while(i<result.length){
             if (i==0){
                 md5_sum=DigestUtils.md5(passwordBytes);
             }else{

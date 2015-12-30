@@ -51,9 +51,8 @@ public class ShadowSocksRequestDecoder extends ReplayingDecoder<State> {
             }
             case READ_PORT:
                 port=in.readUnsignedShort();
-                checkpoint(State.READ_DATA);
                 break;
-            case READ_DATA:
+            default:
                 break;
         }
         //该解码只执行一次，因此执行后将会移除自身
@@ -65,6 +64,5 @@ public class ShadowSocksRequestDecoder extends ReplayingDecoder<State> {
         READ_ADDRESSTYPE,
         READ_ADDRESS,
         READ_PORT,
-        READ_DATA    //读取数据部分内容
     }
 }

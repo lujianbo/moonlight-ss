@@ -13,7 +13,7 @@ import io.netty.util.concurrent.Promise;
 import io.xdd.blackscience.socksserver.proxy.handler.PromiseHandler;
 import io.xdd.blackscience.socksserver.proxy.handler.RelayHandler;
 import io.xdd.blackscience.socksserver.proxy.handler.codec.ShadowSocksAddressType;
-import io.xdd.blackscience.socksserver.proxy.handler.codec.ShadowSocksServerConnectInitializer;
+import io.xdd.blackscience.socksserver.proxy.middle.ShadowSocksServerConnectHandler;
 import io.xdd.blackscience.socksserver.proxy.utils.SocksServerUtils;
 
 import javax.crypto.NoSuchPaddingException;
@@ -22,6 +22,10 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * 连接 shadowsocks 服务器
+ * */
+@ChannelHandler.Sharable
 public class FontendServerConnectHandler extends SimpleChannelInboundHandler<SocksCmdRequest> {
 
     private final Bootstrap b = new Bootstrap();
@@ -30,12 +34,9 @@ public class FontendServerConnectHandler extends SimpleChannelInboundHandler<Soc
 
     private String password;
 
-    public FontendServerConnectHandler(SocketAddress socketAddress, String password){
-        this.socketAddress=socketAddress;
-        this.password = password;
-    }
+    public FontendServerConnectHandler(){
 
-    public FontendServerConnectHandler(){}
+    }
 
     @Override
     public void channelRead0(final ChannelHandlerContext ctx, final SocksCmdRequest request) throws Exception {
@@ -53,13 +54,14 @@ public class FontendServerConnectHandler extends SimpleChannelInboundHandler<Soc
                                          * 移除当前的处理数据
                                          * */
                                         ctx.pipeline().remove(FontendServerConnectHandler.this);
+
                                         /**
-                                         * 设置 ctx数据的处理方式
+                                         * ctx 读取的数据都直接写入到outboundChannel中
                                          * */
                                         ctx.pipeline().addLast(new RelayHandler(outboundChannel));
 
                                         /**
-                                         * 设置 outboundChannel
+                                         * outboundChannel 读到的数据直接写入到 ctx中
                                          * */
                                         outboundChannel.pipeline().addLast(new RelayHandler(ctx.channel()));
 
@@ -92,6 +94,7 @@ public class FontendServerConnectHandler extends SimpleChannelInboundHandler<Soc
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
                 if (future.isSuccess()) {
+                    ctx.channel().writeAndFlush(new SocksCmdResponse(SocksCmdStatus.SUCCESS, request.addressType()));
                     // Connection established use handler provided results
                 } else {
                     // Close the connection if the connection attempt has failed.
@@ -107,23 +110,30 @@ public class FontendServerConnectHandler extends SimpleChannelInboundHandler<Soc
         SocksServerUtils.closeOnFlush(ctx.channel());
     }
 
+    /**
+     * 中继器,交换两个channel中的数据
+     * */
+    private  void exchangeData(Channel inboundChannel,Channel outboundChannel){
+        inboundChannel.pipeline().addLast(new RelayHandler(outboundChannel));
+        outboundChannel.pipeline().addLast(new RelayHandler(inboundChannel));
+    }
 
-    private ShadowSocksServerConnectInitializer getHandler(SocksCmdRequest request) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException {
+    private ShadowSocksServerConnectHandler getHandler(SocksCmdRequest request) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException {
         SocksAddressType addressType=request.addressType();
         String host=request.host();
-        short port= (short) request.port();
-        ShadowSocksServerConnectInitializer serverConnectInitializer = null;
+        int port= request.port();
+        ShadowSocksServerConnectHandler serverConnectInitializer = null;
         switch (addressType) {
             case IPv4: {
-                serverConnectInitializer=new ShadowSocksServerConnectInitializer(password, ShadowSocksAddressType.IPv4,host,port);
+                serverConnectInitializer=new ShadowSocksServerConnectHandler(password, ShadowSocksAddressType.IPv4,host,port);
                 break;
             }
             case DOMAIN: {
-                serverConnectInitializer=new ShadowSocksServerConnectInitializer(password,ShadowSocksAddressType.hostname,host,port);
+                serverConnectInitializer=new ShadowSocksServerConnectHandler(password,ShadowSocksAddressType.hostname,host,port);
                 break;
             }
             case IPv6: {
-                serverConnectInitializer=new ShadowSocksServerConnectInitializer(password,ShadowSocksAddressType.IPv6,host,port);
+                serverConnectInitializer=new ShadowSocksServerConnectHandler(password,ShadowSocksAddressType.IPv6,host,port);
                 break;
             }
         }

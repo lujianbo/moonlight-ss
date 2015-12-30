@@ -1,4 +1,4 @@
-package io.xdd.blackscience.socksserver.common.domain;
+package io.xdd.blackscience.socksserver.common;
 
 public class ShadowSocksProxyServerSpec {
 

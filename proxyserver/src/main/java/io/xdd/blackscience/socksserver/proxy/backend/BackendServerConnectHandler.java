@@ -24,62 +24,37 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.socks.SocksCmdRequest;
-import io.netty.handler.codec.socks.SocksCmdResponse;
-import io.netty.handler.codec.socks.SocksCmdStatus;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
-import io.netty.util.concurrent.Promise;
-import io.xdd.blackscience.socksserver.proxy.handler.PromiseHandler;
 import io.xdd.blackscience.socksserver.proxy.handler.RelayHandler;
+import io.xdd.blackscience.socksserver.proxy.handler.codec.ShadowSocksRequest;
 import io.xdd.blackscience.socksserver.proxy.utils.SocksServerUtils;
 
 @ChannelHandler.Sharable
-public final class BackendServerConnectHandler extends SimpleChannelInboundHandler<SocksCmdRequest> {
+public final class BackendServerConnectHandler extends SimpleChannelInboundHandler<ShadowSocksRequest> {
 
     private final Bootstrap b = new Bootstrap();
 
     @Override
-    public void channelRead0(final ChannelHandlerContext ctx, final SocksCmdRequest request) throws Exception {
-        Promise<Channel> promise = ctx.executor().newPromise();
-        promise.addListener(
-                new GenericFutureListener<Future<Channel>>() {
-                    @Override
-                    public void operationComplete(final Future<Channel> future) throws Exception {
-                        final Channel outboundChannel = future.getNow();
-                        if (future.isSuccess()) {
-                            ctx.channel().writeAndFlush(new SocksCmdResponse(SocksCmdStatus.SUCCESS, request.addressType()))
-                                    .addListener(new ChannelFutureListener() {
-                                        @Override
-                                        public void operationComplete(ChannelFuture channelFuture) {
-                                            ctx.pipeline().remove(BackendServerConnectHandler.this);
-                                            outboundChannel.pipeline().addLast(new RelayHandler(ctx.channel()));
-                                            ctx.pipeline().addLast(new RelayHandler(outboundChannel));
-                                        }
-                                    });
-                        } else {
-                            ctx.channel().writeAndFlush(new SocksCmdResponse(SocksCmdStatus.FAILURE, request.addressType()));
-                            SocksServerUtils.closeOnFlush(ctx.channel());
-                        }
-                    }
-                });
-
+    public void channelRead0(final ChannelHandlerContext ctx, final ShadowSocksRequest request) throws Exception {
         final Channel inboundChannel = ctx.channel();
+
         b.group(inboundChannel.eventLoop())
                 .channel(NioSocketChannel.class)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
-                .option(ChannelOption.SO_KEEPALIVE, true)
-                .handler(new PromiseHandler(promise));
+                .option(ChannelOption.SO_KEEPALIVE, true);
 
+        //向目标端口发起连接
         b.connect(request.host(), request.port()).addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
+                final Channel outboundChannel = future.channel();
                 if (future.isSuccess()) {
-                    // Connection established use handler provided results
+                    ctx.pipeline().remove(BackendServerConnectHandler.this);
+
+                    //两个 channel上的数据进行交换
+                    outboundChannel.pipeline().addLast(new RelayHandler(ctx.channel()));
+
+                    ctx.pipeline().addLast(new RelayHandler(outboundChannel));
                 } else {
-                    // Close the connection if the connection attempt has failed.
-                    ctx.channel().writeAndFlush(
-                            new SocksCmdResponse(SocksCmdStatus.FAILURE, request.addressType()));
                     SocksServerUtils.closeOnFlush(ctx.channel());
                 }
             }
