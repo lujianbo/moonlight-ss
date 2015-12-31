@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.ReplayingDecoder;
 import io.xdd.blackscience.socksserver.crypto.AESCrypto;
+import io.xdd.blackscience.socksserver.crypto.CryptoUtil;
 import io.xdd.blackscience.socksserver.proxy.utils.BytebufCipherUtil;
 
 import javax.crypto.Cipher;
@@ -22,9 +23,9 @@ public class CipherDecoder extends ChannelInboundHandlerAdapter {
 
     private boolean readIV=false;
 
-//    public CipherDecoder(Cipher decryptCipher) {
-//        this.decryptCipher = decryptCipher;
-//    }
+    private final int ivLength=16;
+
+    private final int keyLength=32;
 
     public CipherDecoder(String password) {
         this.password=password;
@@ -35,14 +36,14 @@ public class CipherDecoder extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ByteBuf in=(ByteBuf)msg;
         if (!readIV){
-           if (in.readableBytes()<16){
+           if (in.readableBytes()<ivLength){
                return;
            }else{
-               ByteBuf iv=in.readBytes(16);
-               byte[] ivbytes=new byte[16];
-               iv.getBytes(0,ivbytes);
-               this.decryptCipher=new AESCrypto(password,32,ivbytes).getDecryptCipher();
                readIV=true;
+               ByteBuf iv=in.readBytes(ivLength);
+               byte[] ivbytes=new byte[ivLength];
+               iv.getBytes(0,ivbytes);
+               this.decryptCipher=AESCrypto.getDecryptCipher(CryptoUtil.EVP_BytesToKey(password,keyLength),ivbytes);
            }
         }
         int length=in.readableBytes();

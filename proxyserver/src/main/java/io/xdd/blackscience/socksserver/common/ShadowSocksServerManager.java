@@ -32,6 +32,8 @@ public class ShadowSocksServerManager {
     }
 
     private ShadowSocksServerManager(){
+
+        //load 加载配置
         try {
             URL url = getClass().getClassLoader().getResource("address.cvs");
             Path path = null;

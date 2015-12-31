@@ -33,6 +33,5 @@ public class FontendServerInitializer extends ChannelInitializer<SocketChannel> 
          * */
         p.addLast(frontendServerHandler);
 
-
     }
 }

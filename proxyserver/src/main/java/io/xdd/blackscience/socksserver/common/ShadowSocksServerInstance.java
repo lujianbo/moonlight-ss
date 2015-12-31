@@ -2,7 +2,7 @@ package io.xdd.blackscience.socksserver.common;
 
 
 /**
- * 一个服务器实例的描述
+ * 服务器描述
  * */
 public class ShadowSocksServerInstance {
 

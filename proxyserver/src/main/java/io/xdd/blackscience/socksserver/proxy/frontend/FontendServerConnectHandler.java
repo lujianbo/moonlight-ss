@@ -14,6 +14,7 @@ import io.netty.util.concurrent.Promise;
 import io.xdd.blackscience.socksserver.common.ShadowSocksServerInstance;
 import io.xdd.blackscience.socksserver.common.ShadowSocksServerManager;
 import io.xdd.blackscience.socksserver.crypto.AESCrypto;
+import io.xdd.blackscience.socksserver.crypto.CryptoUtil;
 import io.xdd.blackscience.socksserver.proxy.handler.CipherRelayHandler;
 import io.xdd.blackscience.socksserver.proxy.handler.PromiseHandler;
 import io.xdd.blackscience.socksserver.proxy.handler.RelayHandler;
@@ -47,11 +48,6 @@ public class FontendServerConnectHandler extends SimpleChannelInboundHandler<Soc
     @Override
     public void channelRead0(final ChannelHandlerContext ctx, final SocksCmdRequest request) throws Exception {
         ShadowSocksServerInstance instance=shadowSocksServerManager.getOne();
-        logger.info("instance : "+instance.getAddress()+" "+instance.getPort());
-        byte[] iv = new byte[] { 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF };
-        AESCrypto aesCrypto=new AESCrypto(instance.getPassword(),32,iv);
-        logger.info("iv hex: " + Hex.encodeHexString(aesCrypto.getEncryptCipher().getIV()));
-
         Promise<Channel> promise = ctx.executor().newPromise();
         promise.addListener(
                 new GenericFutureListener<Future<Channel>>() {
@@ -66,25 +62,13 @@ public class FontendServerConnectHandler extends SimpleChannelInboundHandler<Soc
                                          * 移除当前的处理数据
                                          * */
                                         ctx.pipeline().remove(FontendServerConnectHandler.this);
-                                        //
-
-                                        outboundChannel.pipeline().addLast(new CipherEncoder(aesCrypto.getEncryptCipher(),transform(request)));
-                                        //outboundChannel.pipeline().addLast(new ShadowSocksRequestEncoder());
-
+                                        outboundChannel.pipeline().addLast(new CipherEncoder(instance.getPassword(),transform(request)));
                                         outboundChannel.pipeline().addLast(new CipherDecoder(instance.getPassword()));
-                                        outboundChannel.pipeline().addLast(new LoggingHandler());
-                                        outboundChannel.pipeline().addLast(new RelayHandler(ctx.channel()));
-
-                                        /**
-                                         * 写入request
-                                         * */
-                                        //outboundChannel.writeAndFlush(transform(request));
                                         /**
                                          * 数据交换
                                          * */
-
                                         ctx.pipeline().addLast(new RelayHandler(outboundChannel));
-
+                                        outboundChannel.pipeline().addLast(new RelayHandler(ctx.channel()));
                                     });
                         } else {
                             ctx.channel().writeAndFlush(new SocksCmdResponse(SocksCmdStatus.FAILURE, request.addressType()));
