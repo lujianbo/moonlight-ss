@@ -8,6 +8,9 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 import io.xdd.blackscience.socksserver.proxy.utils.BytebufCipherUtil;
 import io.xdd.blackscience.socksserver.proxy.utils.SocksServerUtils;
+import org.apache.commons.codec.binary.Hex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 

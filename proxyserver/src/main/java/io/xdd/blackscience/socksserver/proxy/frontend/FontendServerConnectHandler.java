@@ -7,6 +7,7 @@ import io.netty.handler.codec.socks.SocksAddressType;
 import io.netty.handler.codec.socks.SocksCmdRequest;
 import io.netty.handler.codec.socks.SocksCmdResponse;
 import io.netty.handler.codec.socks.SocksCmdStatus;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.Promise;
@@ -15,10 +16,12 @@ import io.xdd.blackscience.socksserver.common.ShadowSocksServerManager;
 import io.xdd.blackscience.socksserver.crypto.AESCrypto;
 import io.xdd.blackscience.socksserver.proxy.handler.CipherRelayHandler;
 import io.xdd.blackscience.socksserver.proxy.handler.PromiseHandler;
-import io.xdd.blackscience.socksserver.proxy.handler.codec.ShadowSocksAddressType;
-import io.xdd.blackscience.socksserver.proxy.handler.codec.ShadowSocksRequest;
-import io.xdd.blackscience.socksserver.proxy.handler.codec.ShadowSocksRequestEncoder;
+import io.xdd.blackscience.socksserver.proxy.handler.RelayHandler;
+import io.xdd.blackscience.socksserver.proxy.handler.codec.*;
 import io.xdd.blackscience.socksserver.proxy.utils.SocksServerUtils;
+import org.apache.commons.codec.binary.Hex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.NoSuchPaddingException;
 import java.security.InvalidAlgorithmParameterException;
@@ -31,6 +34,8 @@ import java.security.NoSuchAlgorithmException;
 @ChannelHandler.Sharable
 public class FontendServerConnectHandler extends SimpleChannelInboundHandler<SocksCmdRequest> {
 
+    private Logger logger= LoggerFactory.getLogger(getClass());
+
     private final Bootstrap b = new Bootstrap();
 
     private ShadowSocksServerManager shadowSocksServerManager;
@@ -42,7 +47,10 @@ public class FontendServerConnectHandler extends SimpleChannelInboundHandler<Soc
     @Override
     public void channelRead0(final ChannelHandlerContext ctx, final SocksCmdRequest request) throws Exception {
         ShadowSocksServerInstance instance=shadowSocksServerManager.getOne();
-        AESCrypto aesCrypto=new AESCrypto(instance.getPassword(),32,16);
+        logger.info("instance : "+instance.getAddress()+" "+instance.getPort());
+        byte[] iv = new byte[] { 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF };
+        AESCrypto aesCrypto=new AESCrypto(instance.getPassword(),32,iv);
+        logger.info("iv hex: " + Hex.encodeHexString(aesCrypto.getEncryptCipher().getIV()));
 
         Promise<Channel> promise = ctx.executor().newPromise();
         promise.addListener(
@@ -58,30 +66,26 @@ public class FontendServerConnectHandler extends SimpleChannelInboundHandler<Soc
                                          * 移除当前的处理数据
                                          * */
                                         ctx.pipeline().remove(FontendServerConnectHandler.this);
+                                        //
 
-                                        /**
-                                         * 写入 IV
-                                         * */
-                                        byte[] iv=aesCrypto.getEncryptCipher().getIV();
-                                        outboundChannel.writeAndFlush(iv);
-
-                                        /**
-                                         * 配置 处理链
-                                         * */
+                                        outboundChannel.pipeline().addLast(new LoggingHandler());
+                                        outboundChannel.pipeline().addLast(new CipherEncoder(aesCrypto.getEncryptCipher()));
                                         outboundChannel.pipeline().addLast(new ShadowSocksRequestEncoder());
-                                        /**
-                                         * outbound的数据解密后放入 ctx
-                                         * */
-                                        outboundChannel.pipeline().addLast(new CipherRelayHandler(ctx.channel(),aesCrypto.getDecryptCipher()));
-                                        /**
-                                         * ctx的数据加密后放入outbound
-                                         * */
-                                        ctx.pipeline().addLast(new CipherRelayHandler(outboundChannel,aesCrypto.getEncryptCipher()));
+
+                                        outboundChannel.pipeline().addLast(new CipherDecoder(aesCrypto.getDecryptCipher()));
+                                        outboundChannel.pipeline().addFirst(new RelayHandler(ctx.channel()));
 
                                         /**
                                          * 写入request
                                          * */
                                         outboundChannel.write(transform(request));
+                                        /**
+                                         * 数据交换
+                                         * */
+
+                                        ctx.pipeline().addLast(new RelayHandler(outboundChannel));
+
+
 
                                     });
                         } else {
@@ -113,6 +117,7 @@ public class FontendServerConnectHandler extends SimpleChannelInboundHandler<Soc
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
                 if (future.isSuccess()) {
+                    logger.info("connect shadowSocks Success");
                     //ctx.channel().writeAndFlush(new SocksCmdResponse(SocksCmdStatus.SUCCESS, request.addressType()));
                     // Connection established use handler provided results
                 } else {
@@ -130,6 +135,9 @@ public class FontendServerConnectHandler extends SimpleChannelInboundHandler<Soc
     }
 
     private ShadowSocksRequest transform(SocksCmdRequest request) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException {
+
+        logger.info("transform: "+request.host()+" "+request.port());
+
         SocksAddressType addressType=request.addressType();
         String host=request.host();
         int port= request.port();

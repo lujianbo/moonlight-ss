@@ -14,7 +14,7 @@ import io.netty.handler.logging.LoggingHandler;
  * */
 public final class ProxyServer {
 
-    static final int PORT = Integer.parseInt(System.getProperty("port", "1080"));
+    static final int PORT = Integer.parseInt(System.getProperty("port", "7778"));
 
     private EventLoopGroup bossGroup = new NioEventLoopGroup(1);
     private EventLoopGroup workerGroup = new NioEventLoopGroup();

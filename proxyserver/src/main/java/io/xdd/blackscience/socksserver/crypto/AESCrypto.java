@@ -23,15 +23,19 @@ public class AESCrypto {
 
     private transient final Cipher decryptCipher;
 
+    private String method="AES/CFB8/NoPadding";
+
+
+
     public AESCrypto(String password,int keyLength,int ivLength) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException {
 
         SecretKey secretKey=generatorKey(password,keyLength);
         IvParameterSpec ivParameterSpec=generatorIvParameter(ivLength);
 
-        encryptCipher = Cipher.getInstance("AES/CFB8/NoPadding");
+        encryptCipher = Cipher.getInstance(method);
         encryptCipher.init(Cipher.ENCRYPT_MODE,secretKey,ivParameterSpec);
 
-        decryptCipher = Cipher.getInstance("AES/CFB8/NoPadding");
+        decryptCipher = Cipher.getInstance(method);
         decryptCipher.init(Cipher.DECRYPT_MODE,secretKey,ivParameterSpec);
 
     }
@@ -40,10 +44,10 @@ public class AESCrypto {
         SecretKey secretKey=generatorKey(password,keyLength);
         IvParameterSpec ivParameterSpec=new IvParameterSpec(iv);
 
-        encryptCipher = Cipher.getInstance("AES/CFB/NoPadding");
+        encryptCipher = Cipher.getInstance(method);
         encryptCipher.init(Cipher.ENCRYPT_MODE,secretKey,ivParameterSpec);
 
-        decryptCipher = Cipher.getInstance("AES/CFB/NoPadding");
+        decryptCipher = Cipher.getInstance(method);
         decryptCipher.init(Cipher.DECRYPT_MODE,secretKey,ivParameterSpec);
     }
 

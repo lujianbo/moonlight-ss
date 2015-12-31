@@ -32,27 +32,23 @@ public class ShadowSocksRequest {
     public void encodeAsByteBuf(ByteBuf byteBuf){
         byteBuf.writeByte(addressType.byteValue());
         switch (addressType) {
-            case IPv4: {
+            case IPv4:
                 byteBuf.writeBytes(NetUtil.createByteArrayFromIpAddressString(host));
                 byteBuf.writeShort(port);
                 break;
-            }
-
-            case hostname: {
+            case hostname:
                 byteBuf.writeByte(host.length());
                 byteBuf.writeBytes(host.getBytes(CharsetUtil.US_ASCII));
                 byteBuf.writeShort(port);
                 break;
-            }
-
-            case IPv6: {
+            case IPv6:
                 byteBuf.writeBytes(NetUtil.createByteArrayFromIpAddressString(host));
                 byteBuf.writeShort(port);
                 break;
-            }
+            default:
+                break;
         }
     }
-
 
     public String host(){
         return host;

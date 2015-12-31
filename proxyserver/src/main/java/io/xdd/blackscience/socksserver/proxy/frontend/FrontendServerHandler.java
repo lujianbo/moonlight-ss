@@ -5,23 +5,26 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.socks.*;
 import io.xdd.blackscience.socksserver.proxy.utils.SocksServerUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ChannelHandler.Sharable
 public class FrontendServerHandler extends SimpleChannelInboundHandler<SocksRequest> {
 
+    private Logger logger= LoggerFactory.getLogger(getClass());
+
     @Override
     public void channelRead0(ChannelHandlerContext ctx, SocksRequest socksRequest) throws Exception {
         switch (socksRequest.requestType()) {
-
             case INIT: { //初始化
                 // auth support example
                 //ctx.pipeline().addFirst(new SocksAuthRequestDecoder());
                 //ctx.write(new SocksInitResponse(SocksAuthScheme.AUTH_PASSWORD));
+                logger.info("init");
                 ctx.pipeline().addFirst(new SocksCmdRequestDecoder());
                 ctx.write(new SocksInitResponse(SocksAuthScheme.NO_AUTH));
                 break;
             }
-
             case AUTH://鉴权
                 ctx.pipeline().addFirst(new SocksCmdRequestDecoder());
                 ctx.write(new SocksAuthResponse(SocksAuthStatus.SUCCESS));
@@ -33,6 +36,7 @@ public class FrontendServerHandler extends SimpleChannelInboundHandler<SocksRequ
                     /**
                      * 切换进入代理模式
                      * */
+                    logger.info("cmd");
                     ctx.pipeline().addLast(new FontendServerConnectHandler());
                     ctx.pipeline().remove(this);
                     /**

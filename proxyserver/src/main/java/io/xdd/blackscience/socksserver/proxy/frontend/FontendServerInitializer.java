@@ -6,6 +6,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.socks.SocksInitRequestDecoder;
 import io.netty.handler.codec.socks.SocksMessageEncoder;
+import io.netty.handler.logging.LoggingHandler;
 
 @ChannelHandler.Sharable
 public class FontendServerInitializer extends ChannelInitializer<SocketChannel> {
@@ -31,5 +32,7 @@ public class FontendServerInitializer extends ChannelInitializer<SocketChannel> 
          * 数据处理
          * */
         p.addLast(frontendServerHandler);
+
+
     }
 }
