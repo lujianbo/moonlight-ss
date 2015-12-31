@@ -17,21 +17,27 @@ public class CipherEncoder extends ChannelOutboundHandlerAdapter {
 
     private boolean iv_sent=false;
 
-    public CipherEncoder(Cipher encryptCipher){
+    private ShadowSocksRequest request;
+
+    public CipherEncoder(Cipher encryptCipher,ShadowSocksRequest request){
         this.encryptCipher = encryptCipher;
+        this.request=request;
     }
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
         ByteBuf out=ctx.alloc().buffer();
+        ByteBuf in=ctx.alloc().buffer();
         if (!iv_sent){
             iv_sent=true;
             out.writeBytes(encryptCipher.getIV());
+            request.encodeAsByteBuf(in);
         }
-        ByteBuf in= (ByteBuf) msg;
+        in.writeBytes((ByteBuf) msg);
         ByteBuf temp=ctx.alloc().buffer(in.capacity());
         BytebufCipherUtil.update(encryptCipher,in,temp);//update 解密
         out.writeBytes(temp);
         ctx.write(out);
     }
+
 }

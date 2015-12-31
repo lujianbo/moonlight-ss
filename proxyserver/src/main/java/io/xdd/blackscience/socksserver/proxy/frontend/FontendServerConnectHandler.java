@@ -68,24 +68,22 @@ public class FontendServerConnectHandler extends SimpleChannelInboundHandler<Soc
                                         ctx.pipeline().remove(FontendServerConnectHandler.this);
                                         //
 
-                                        outboundChannel.pipeline().addLast(new LoggingHandler());
-                                        outboundChannel.pipeline().addLast(new CipherEncoder(aesCrypto.getEncryptCipher()));
-                                        outboundChannel.pipeline().addLast(new ShadowSocksRequestEncoder());
+                                        outboundChannel.pipeline().addLast(new CipherEncoder(aesCrypto.getEncryptCipher(),transform(request)));
+                                        //outboundChannel.pipeline().addLast(new ShadowSocksRequestEncoder());
 
-                                        outboundChannel.pipeline().addLast(new CipherDecoder(aesCrypto.getDecryptCipher()));
-                                        outboundChannel.pipeline().addFirst(new RelayHandler(ctx.channel()));
+                                        outboundChannel.pipeline().addLast(new CipherDecoder(instance.getPassword()));
+                                        outboundChannel.pipeline().addLast(new LoggingHandler());
+                                        outboundChannel.pipeline().addLast(new RelayHandler(ctx.channel()));
 
                                         /**
                                          * 写入request
                                          * */
-                                        outboundChannel.write(transform(request));
+                                        //outboundChannel.writeAndFlush(transform(request));
                                         /**
                                          * 数据交换
                                          * */
 
                                         ctx.pipeline().addLast(new RelayHandler(outboundChannel));
-
-
 
                                     });
                         } else {

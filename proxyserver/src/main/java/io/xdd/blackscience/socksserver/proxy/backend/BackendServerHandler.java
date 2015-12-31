@@ -29,7 +29,7 @@ public class BackendServerHandler extends ReplayingDecoder<Void> {
         ctx.pipeline().remove(this);
         //加解密
         AESCrypto aesCrypto=new AESCrypto(password,keyLength,iv);
-        ctx.pipeline().addLast(new CipherDecoder(aesCrypto.getDecryptCipher()));
-        ctx.pipeline().addLast(new CipherEncoder(aesCrypto.getEncryptCipher()));
+//        ctx.pipeline().addLast(new CipherDecoder(aesCrypto.getDecryptCipher()));
+//        ctx.pipeline().addLast(new CipherEncoder(aesCrypto.getEncryptCipher()));
     }
 }
