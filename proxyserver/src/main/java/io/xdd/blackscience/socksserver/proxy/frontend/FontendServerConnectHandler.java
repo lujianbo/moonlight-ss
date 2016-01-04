@@ -99,7 +99,6 @@ public class FontendServerConnectHandler extends SimpleChannelInboundHandler<Soc
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
                 if (future.isSuccess()) {
-                    logger.info("connect shadowSocks Success");
                     //ctx.channel().writeAndFlush(new SocksCmdResponse(SocksCmdStatus.SUCCESS, request.addressType()));
                     // Connection established use handler provided results
                 } else {
@@ -117,9 +116,6 @@ public class FontendServerConnectHandler extends SimpleChannelInboundHandler<Soc
     }
 
     private ShadowSocksRequest transform(SocksCmdRequest request) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException {
-
-        logger.info("transform: "+request.host()+" "+request.port());
-
         SocksAddressType addressType=request.addressType();
         String host=request.host();
         int port= request.port();

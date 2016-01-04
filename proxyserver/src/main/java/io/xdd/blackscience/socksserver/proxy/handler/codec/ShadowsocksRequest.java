@@ -4,6 +4,9 @@ import io.netty.buffer.ByteBuf;
 import io.netty.util.CharsetUtil;
 import io.netty.util.NetUtil;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 public class ShadowSocksRequest {
 
     /**
@@ -27,6 +30,27 @@ public class ShadowSocksRequest {
         this.addressType = addressType;
         this.host = host;
         this.port = port;
+    }
+
+    public byte[] encodeToBytes() throws IOException {
+        ByteArrayOutputStream byteBuf=new ByteArrayOutputStream();
+        byteBuf.write(addressType.byteValue());
+        switch (addressType) {
+            case IPv4:
+                byteBuf.write(NetUtil.createByteArrayFromIpAddressString(host));
+                break;
+            case hostname:
+                byteBuf.write(host.length());
+                byteBuf.write(host.getBytes(CharsetUtil.US_ASCII));
+                break;
+            case IPv6:
+                byteBuf.write(NetUtil.createByteArrayFromIpAddressString(host));
+                break;
+            default:
+                break;
+        }
+        byteBuf.write((short)port);
+        return byteBuf.toByteArray();
     }
 
     public void encodeAsByteBuf(ByteBuf byteBuf){
