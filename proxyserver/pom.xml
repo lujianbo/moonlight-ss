@@ -28,6 +28,7 @@
             <artifactId>netty-all</artifactId>
             <version>4.0.33.Final</version>
         </dependency>
+
         <!-- guava -->
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -63,6 +64,7 @@
             <scope>provided</scope>
         </dependency>
 
+        <!--加解密 -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>

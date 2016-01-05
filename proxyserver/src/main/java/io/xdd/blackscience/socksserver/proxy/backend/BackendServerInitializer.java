@@ -10,8 +10,6 @@ import io.xdd.blackscience.socksserver.proxy.handler.codec.ShadowSocksRequestDec
 @ChannelHandler.Sharable
 public class BackendServerInitializer extends ChannelInitializer<SocketChannel> {
 
-
-
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
 
