@@ -3,12 +3,10 @@ package io.xdd.blackscience.socksserver.proxy.handler.codec;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.xdd.blackscience.socksserver.crypto.SSCipher;
-import io.xdd.blackscience.socksserver.crypto.SSCiphersConstant;
+import io.netty.util.ReferenceCountUtil;
+import io.xdd.blackscience.socksserver.common.crypto.SSCipher;
+import io.xdd.blackscience.socksserver.common.crypto.SSCiphersConstant;
 import io.xdd.blackscience.socksserver.proxy.utils.BytebufCipherUtil;
-
-
-
 
 /**
  * IV 作为数据开头的加密处理

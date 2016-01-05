@@ -56,7 +56,7 @@ public class ShadowSocksRequestDecoder extends ReplayingDecoder<State> {
                 break;
         }
         //该解码只执行一次，因此执行后将会移除自身
-        ctx.pipeline().remove(this);
+        ctx.pipeline().remove(ShadowSocksRequestDecoder.this);
         out.add(new ShadowSocksRequest(addressType,address,port));
     }
 

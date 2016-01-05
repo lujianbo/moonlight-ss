@@ -9,6 +9,5 @@ public class ShadowSocksRequestEncoder extends MessageToByteEncoder<ShadowSocksR
     @Override
     protected void encode(ChannelHandlerContext ctx, ShadowSocksRequest request, ByteBuf out) throws Exception {
         request.encodeAsByteBuf(out);
-        ctx.pipeline().remove(this);
     }
 }

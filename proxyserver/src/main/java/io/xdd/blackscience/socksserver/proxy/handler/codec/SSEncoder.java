@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
-import io.xdd.blackscience.socksserver.crypto.SSCipher;
+import io.xdd.blackscience.socksserver.common.crypto.SSCipher;
 import io.xdd.blackscience.socksserver.proxy.utils.BytebufCipherUtil;
 
 
@@ -17,23 +17,19 @@ public class SSEncoder extends ChannelOutboundHandlerAdapter {
 
     private boolean iv_sent=false;
 
-    private ShadowSocksRequest request;
 
-    public SSEncoder(String method, String password, ShadowSocksRequest request){
-        this.request=request;
+    public SSEncoder(String method, String password){
         encryptCipher=new SSCipher(method,password,true);
     }
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
         ByteBuf out=ctx.alloc().buffer();
-        ByteBuf in=ctx.alloc().buffer();
         if (!iv_sent){
             iv_sent=true;
             out.writeBytes(encryptCipher.getIv());
-            request.encodeAsByteBuf(in);
         }
-        in.writeBytes((ByteBuf)msg);
+        ByteBuf in=(ByteBuf)msg;
         ByteBuf temp=ctx.alloc().buffer(in.capacity());
         BytebufCipherUtil.update(encryptCipher,in,temp);//update 解密
         out.writeBytes(temp);

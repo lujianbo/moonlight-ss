@@ -37,7 +37,7 @@ public class FrontendServerHandler extends SimpleChannelInboundHandler<SocksRequ
                      * 切换进入代理模式
                      * */
                     logger.info("cmd");
-                    ctx.pipeline().addLast(new FontendServerConnectHandler());
+                    ctx.pipeline().addLast(new FrontendServerConnectHandler());
                     ctx.pipeline().remove(this);
                     /**
                      * 然后再fire继续处理

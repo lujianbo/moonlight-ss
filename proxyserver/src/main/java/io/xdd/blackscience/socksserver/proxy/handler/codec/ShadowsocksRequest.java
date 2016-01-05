@@ -5,6 +5,7 @@ import io.netty.util.CharsetUtil;
 import io.netty.util.NetUtil;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class ShadowSocksRequest {

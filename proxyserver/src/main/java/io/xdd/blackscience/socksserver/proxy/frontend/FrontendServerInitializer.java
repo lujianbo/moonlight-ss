@@ -9,7 +9,7 @@ import io.netty.handler.codec.socks.SocksMessageEncoder;
 import io.netty.handler.logging.LoggingHandler;
 
 @ChannelHandler.Sharable
-public class FontendServerInitializer extends ChannelInitializer<SocketChannel> {
+public class FrontendServerInitializer extends ChannelInitializer<SocketChannel> {
 
     private final SocksMessageEncoder socksMessageEncoder = new SocksMessageEncoder();
     private final FrontendServerHandler frontendServerHandler = new FrontendServerHandler();

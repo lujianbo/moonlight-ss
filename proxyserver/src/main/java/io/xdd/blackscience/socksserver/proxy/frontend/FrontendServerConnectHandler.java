@@ -1,6 +1,7 @@
 package io.xdd.blackscience.socksserver.proxy.frontend;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.socks.SocksAddressType;
@@ -10,8 +11,8 @@ import io.netty.handler.codec.socks.SocksCmdStatus;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.Promise;
-import io.xdd.blackscience.socksserver.common.ShadowSocksServerInstance;
-import io.xdd.blackscience.socksserver.common.ShadowSocksServerManager;
+import io.xdd.blackscience.socksserver.common.manager.SSServerInstance;
+import io.xdd.blackscience.socksserver.common.manager.SSServerManager;
 import io.xdd.blackscience.socksserver.proxy.handler.PromiseHandler;
 import io.xdd.blackscience.socksserver.proxy.handler.RelayHandler;
 import io.xdd.blackscience.socksserver.proxy.handler.codec.*;
@@ -28,21 +29,21 @@ import java.security.NoSuchAlgorithmException;
  * 连接 shadowsocks 服务器
  * */
 @ChannelHandler.Sharable
-public class FontendServerConnectHandler extends SimpleChannelInboundHandler<SocksCmdRequest> {
+public class FrontendServerConnectHandler extends SimpleChannelInboundHandler<SocksCmdRequest> {
 
     private Logger logger= LoggerFactory.getLogger(getClass());
 
     private final Bootstrap b = new Bootstrap();
 
-    private ShadowSocksServerManager shadowSocksServerManager;
+    private SSServerManager shadowSocksServerManager;
 
-    public FontendServerConnectHandler(){
-        this.shadowSocksServerManager=ShadowSocksServerManager.getInstance();
+    public FrontendServerConnectHandler(){
+        this.shadowSocksServerManager= SSServerManager.getInstance();
     }
 
     @Override
     public void channelRead0(final ChannelHandlerContext ctx, final SocksCmdRequest request) throws Exception {
-        ShadowSocksServerInstance instance=shadowSocksServerManager.getOne();
+        SSServerInstance instance=shadowSocksServerManager.getOne();
         Promise<Channel> promise = ctx.executor().newPromise();
         promise.addListener(
                 new GenericFutureListener<Future<Channel>>() {
@@ -56,13 +57,12 @@ public class FontendServerConnectHandler extends SimpleChannelInboundHandler<Soc
                                         /**
                                          * 移除当前的处理数据
                                          * */
-                                        ctx.pipeline().remove(FontendServerConnectHandler.this);
-                                        outboundChannel.pipeline().addLast(new SSEncoder(instance.getMethod(),instance.getPassword(),transform(request)));
-                                        outboundChannel.pipeline().addLast(new SSDecoder(instance.getMethod(),instance.getPassword()));
-                                        /**
-                                         * 数据交换
-                                         * */
+                                        ctx.pipeline().remove(FrontendServerConnectHandler.this);
+                                        outboundChannel.pipeline().addLast(new SSEncoder(instance.getMethod(),instance.getPassword()));
+                                        outboundChannel.pipeline().addLast(new ShadowSocksRequestEncoder());
+                                        outboundChannel.write(transform(request));
                                         ctx.pipeline().addLast(new RelayHandler(outboundChannel));
+                                        outboundChannel.pipeline().addLast(new SSDecoder(instance.getMethod(),instance.getPassword()));
                                         outboundChannel.pipeline().addLast(new RelayHandler(ctx.channel()));
                                     });
                         } else {
@@ -80,8 +80,7 @@ public class FontendServerConnectHandler extends SimpleChannelInboundHandler<Soc
                 .channel(NioSocketChannel.class)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
                 .option(ChannelOption.SO_KEEPALIVE, true)
-                //把promise设置到Handler中来触发promise
-                .handler(new PromiseHandler(promise));
+                .handler(new PromiseHandler(promise));//把promise设置到Handler中来触发promise
 
         /**
          * 获取目标服务器的相关信息

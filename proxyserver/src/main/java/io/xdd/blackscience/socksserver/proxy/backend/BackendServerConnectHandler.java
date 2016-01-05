@@ -24,7 +24,12 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
+import io.netty.util.concurrent.Promise;
+import io.xdd.blackscience.socksserver.proxy.handler.PromiseHandler;
 import io.xdd.blackscience.socksserver.proxy.handler.RelayHandler;
+import io.xdd.blackscience.socksserver.proxy.handler.codec.SSDecoder;
 import io.xdd.blackscience.socksserver.proxy.handler.codec.ShadowSocksRequest;
 import io.xdd.blackscience.socksserver.proxy.utils.SocksServerUtils;
 
@@ -35,12 +40,31 @@ public final class BackendServerConnectHandler extends SimpleChannelInboundHandl
 
     @Override
     public void channelRead0(final ChannelHandlerContext ctx, final ShadowSocksRequest request) throws Exception {
+        Promise<Channel> promise = ctx.executor().newPromise();
+        promise.addListener(
+                new GenericFutureListener<Future<Channel>>() {
+                    @Override
+                    public void operationComplete(Future<Channel> future) throws Exception {
+                        final Channel outboundChannel = future.getNow();
+                        if (future.isSuccess()){
+                            ctx.pipeline().remove(BackendServerConnectHandler.this);
+                            //交换数据
+                            ctx.pipeline().addLast(new RelayHandler(outboundChannel));
+                            outboundChannel.pipeline().addLast(new RelayHandler(ctx.channel()));
+                        }else {
+                            SocksServerUtils.closeOnFlush(ctx.channel());
+                        }
+                    }
+                });
+
+
         final Channel inboundChannel = ctx.channel();
 
         b.group(inboundChannel.eventLoop())
                 .channel(NioSocketChannel.class)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
-                .option(ChannelOption.SO_KEEPALIVE, true);
+                .option(ChannelOption.SO_KEEPALIVE, true)
+        .handler(new PromiseHandler(promise));
 
         //向目标端口发起连接
         b.connect(request.host(), request.port()).addListener(new ChannelFutureListener() {

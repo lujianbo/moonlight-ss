@@ -2,7 +2,7 @@ package io.xdd.blackscience.socksserver.context;
 
 
 import io.xdd.blackscience.socksserver.proxy.ProxyServer;
-import io.xdd.blackscience.socksserver.proxy.frontend.FontendServerInitializer;
+import io.xdd.blackscience.socksserver.proxy.frontend.FrontendServerInitializer;
 
 /**
  * web context to Manager ProxyServer
@@ -13,7 +13,7 @@ public class ContextLoader{
 
     public void initSocksServer() {
         if (proxyServer==null){
-            proxyServer=new ProxyServer(new FontendServerInitializer());
+            proxyServer=new ProxyServer(new FrontendServerInitializer());
             proxyServer.start();
         }
     }

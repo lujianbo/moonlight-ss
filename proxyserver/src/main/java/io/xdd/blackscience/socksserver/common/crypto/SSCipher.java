@@ -1,4 +1,4 @@
-package io.xdd.blackscience.socksserver.crypto;
+package io.xdd.blackscience.socksserver.common.crypto;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.bouncycastle.crypto.StreamCipher;

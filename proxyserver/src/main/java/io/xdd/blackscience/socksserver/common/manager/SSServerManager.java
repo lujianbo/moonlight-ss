@@ -1,8 +1,6 @@
-package io.xdd.blackscience.socksserver.common;
+package io.xdd.blackscience.socksserver.common.manager;
 
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -14,24 +12,24 @@ import java.util.List;
 /**
  * 服务器管理器,负责管理已经注册的服务器
  * */
-public class ShadowSocksServerManager {
+public class SSServerManager {
 
-    private ArrayList<ShadowSocksServerInstance> address=new ArrayList<>();
+    private ArrayList<SSServerInstance> address=new ArrayList<>();
 
     /**
      * 返回一个最佳的服务器地址
      * */
-    public ShadowSocksServerInstance getOne(){
+    public SSServerInstance getOne(){
         return address.get(0);//永远返回第一个,其余的先不管了
     }
 
-    private static ShadowSocksServerManager ourInstance = new ShadowSocksServerManager();
+    private static SSServerManager ourInstance = new SSServerManager();
 
-    public static ShadowSocksServerManager getInstance() {
+    public static SSServerManager getInstance() {
         return ourInstance;
     }
 
-    private ShadowSocksServerManager(){
+    private SSServerManager(){
 
         //load 加载配置
         try {
@@ -41,7 +39,7 @@ public class ShadowSocksServerManager {
                 path = Paths.get(url.toURI());
                 List<String> list = Files.readAllLines(path, Charset.defaultCharset());
                 list.forEach(s -> {
-                    ShadowSocksServerInstance instance=new ShadowSocksServerInstance();
+                    SSServerInstance instance=new SSServerInstance();
                     String[] strs=s.split(",");
                     instance.setAddress(strs[0]);
                     instance.setPort(Integer.valueOf(strs[1]));
@@ -56,6 +54,6 @@ public class ShadowSocksServerManager {
     }
 
     public static void main(String[] args) {
-        ShadowSocksServerManager.getInstance();
+        SSServerManager.getInstance();
     }
 }

@@ -1,17 +1,7 @@
-package io.xdd.blackscience.socksserver.crypto;
+package io.xdd.blackscience.socksserver.common.crypto;
 
-import org.apache.commons.codec.binary.Hex;
 import org.junit.Before;
 import org.junit.Test;
-
-import javax.crypto.Cipher;
-import javax.crypto.NoSuchPaddingException;
-import java.io.ByteArrayOutputStream;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-
-import static org.junit.Assert.*;
 
 public class AESCryptoTest {
 

@@ -1,10 +1,10 @@
-package io.xdd.blackscience.socksserver.common;
+package io.xdd.blackscience.socksserver.common.manager;
 
 
 /**
  * 服务器描述
  * */
-public class ShadowSocksServerInstance {
+public class SSServerInstance {
 
     private String address;
 
