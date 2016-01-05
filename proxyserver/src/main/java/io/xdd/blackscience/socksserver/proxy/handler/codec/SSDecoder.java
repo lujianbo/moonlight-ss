@@ -3,34 +3,33 @@ package io.xdd.blackscience.socksserver.proxy.handler.codec;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.handler.codec.ReplayingDecoder;
-import io.xdd.blackscience.socksserver.crypto.AESCrypto;
-import io.xdd.blackscience.socksserver.crypto.CryptoUtil;
+import io.xdd.blackscience.socksserver.crypto.SSCipher;
+import io.xdd.blackscience.socksserver.crypto.SSCiphersConstant;
 import io.xdd.blackscience.socksserver.proxy.utils.BytebufCipherUtil;
 
-import javax.crypto.Cipher;
-import java.util.List;
+
 
 
 /**
  * IV 作为数据开头的加密处理
  * */
-public class CipherDecoder extends ChannelInboundHandlerAdapter {
+public class SSDecoder extends ChannelInboundHandlerAdapter {
 
-    private transient Cipher decryptCipher;
+    private transient SSCipher decryptCipher;
 
     private String password;
 
+    private String method;
+
     private boolean readIV=false;
 
-    private final int ivLength=16;
+    private int ivLength=16;
 
-    private final int keyLength=32;
-
-    public CipherDecoder(String password) {
+    public SSDecoder(String method,String password) {
         this.password=password;
+        this.method=method;
+        this.ivLength= SSCiphersConstant.getSSCrypto(method).getIvLength();
     }
-
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -43,7 +42,7 @@ public class CipherDecoder extends ChannelInboundHandlerAdapter {
                ByteBuf iv=in.readBytes(ivLength);
                byte[] ivbytes=new byte[ivLength];
                iv.getBytes(0,ivbytes);
-               this.decryptCipher=AESCrypto.getDecryptCipher(CryptoUtil.EVP_BytesToKey(password,keyLength),ivbytes);
+               this.decryptCipher=new SSCipher(ivbytes,method,password,false);
            }
         }
         int length=in.readableBytes();

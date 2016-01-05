@@ -7,20 +7,15 @@ import io.netty.handler.codec.socks.SocksAddressType;
 import io.netty.handler.codec.socks.SocksCmdRequest;
 import io.netty.handler.codec.socks.SocksCmdResponse;
 import io.netty.handler.codec.socks.SocksCmdStatus;
-import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.Promise;
 import io.xdd.blackscience.socksserver.common.ShadowSocksServerInstance;
 import io.xdd.blackscience.socksserver.common.ShadowSocksServerManager;
-import io.xdd.blackscience.socksserver.crypto.AESCrypto;
-import io.xdd.blackscience.socksserver.crypto.CryptoUtil;
-import io.xdd.blackscience.socksserver.proxy.handler.CipherRelayHandler;
 import io.xdd.blackscience.socksserver.proxy.handler.PromiseHandler;
 import io.xdd.blackscience.socksserver.proxy.handler.RelayHandler;
 import io.xdd.blackscience.socksserver.proxy.handler.codec.*;
 import io.xdd.blackscience.socksserver.proxy.utils.SocksServerUtils;
-import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,8 +57,8 @@ public class FontendServerConnectHandler extends SimpleChannelInboundHandler<Soc
                                          * 移除当前的处理数据
                                          * */
                                         ctx.pipeline().remove(FontendServerConnectHandler.this);
-                                        outboundChannel.pipeline().addLast(new CipherEncoder(instance.getPassword(),transform(request)));
-                                        outboundChannel.pipeline().addLast(new CipherDecoder(instance.getPassword()));
+                                        outboundChannel.pipeline().addLast(new SSEncoder(instance.getMethod(),instance.getPassword(),transform(request)));
+                                        outboundChannel.pipeline().addLast(new SSDecoder(instance.getMethod(),instance.getPassword()));
                                         /**
                                          * 数据交换
                                          * */

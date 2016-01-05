@@ -45,7 +45,8 @@ public class ShadowSocksServerManager {
                     String[] strs=s.split(",");
                     instance.setAddress(strs[0]);
                     instance.setPort(Integer.valueOf(strs[1]));
-                    instance.setPassword(strs[2]);
+                    instance.setMethod(strs[2]);
+                    instance.setPassword(strs[3]);
                     address.add(instance);
                 });
             }

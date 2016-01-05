@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 
 public class AESCryptoTest {
 
-    private AESCrypto aesCrypto;
+
 
     @Before
     public void before(){

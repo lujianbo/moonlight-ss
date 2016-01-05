@@ -1,12 +1,23 @@
 package io.xdd.blackscience.socksserver.crypto;
 
+import org.bouncycastle.crypto.engines.AESFastEngine;
+import org.bouncycastle.crypto.modes.CFBBlockCipher;
+import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.security.Provider;
-import java.security.Security;
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.security.*;
 
 import static org.junit.Assert.*;
 
@@ -15,7 +26,6 @@ public class CryptoTest {
     @Before
     public void setUp() throws Exception {
         //add Provider
-
         Security.addProvider(new BouncyCastleProvider());
         Provider[]	providers = Security.getProviders();
         for (int i = 0; i != providers.length; i++)
@@ -25,8 +35,41 @@ public class CryptoTest {
     }
 
     @Test
-    public void test(){
+    public void test() throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, NoSuchProviderException, IOException {
+//        String method="AES/CFB/NoPadding";
+//        byte[] iv= CryptoUtil.generatorIvParameter(16);
+//        SecretKey secretKey=new SecretKeySpec(CryptoUtil.EVP_BytesToKey("password",32),"AES");
+//        Cipher en=Cipher.getInstance(method,"BC");
+//        Cipher de=Cipher.getInstance(method,"BC");
+//        en.init(Cipher.ENCRYPT_MODE,secretKey,new IvParameterSpec(iv));
+//        de.init(Cipher.DECRYPT_MODE,secretKey,new IvParameterSpec(iv));
+//        System.out.println(en.getAlgorithm());
+//        ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
+//        for (int i=0;i<10;i++){
+//            byte[] xbyte="x".getBytes();
+//            byteArrayOutputStream.write(en.update(xbyte));
+//        }
+//        System.out.println(byteArrayOutputStream.size());
+//        byte[] result=de.update(byteArrayOutputStream.toByteArray());
+//        System.out.println(new String(result));
 
+    }
+
+    @Test
+    public void testbc(){
+//        AESFastEngine engine = new AESFastEngine();
+//        CFBBlockCipher cipher = new CFBBlockCipher(engine, 16 * 8);
+//        System.out.println(cipher.getAlgorithmName());
+//        byte[] xbyte="x".getBytes();
+//        byte[] result=new byte[xbyte.length];
+//        ParametersWithIV parameterIV = new ParametersWithIV(new KeyParameter(CryptoUtil.EVP_BytesToKey("password",32)),CryptoUtil.generatorIvParameter(16));
+//        cipher.init(true,parameterIV);
+//        int size=cipher.processBytes(xbyte,0,xbyte.length,result,0);
+//        System.out.println(size);
+//        System.out.println(result[0]);
+//        System.out.println(byteArrayOutputStream.size());
+//        byte[] result=de.update(byteArrayOutputStream.toByteArray());
+//        System.out.println(new String(result));
     }
 
     @After
