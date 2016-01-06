@@ -21,5 +21,7 @@ public class HttpProxyServerInitializer extends ChannelInitializer<SocketChannel
         ch.pipeline().addLast(new HttpRequestEncoder());
 
 
+
+        ch.pipeline().addLast(new HttpProxyHandler());
     }
 }

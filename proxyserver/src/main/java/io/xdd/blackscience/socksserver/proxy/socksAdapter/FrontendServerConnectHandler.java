@@ -12,7 +12,7 @@ import io.netty.util.concurrent.Promise;
 import io.xdd.blackscience.socksserver.common.manager.SSServerInstance;
 import io.xdd.blackscience.socksserver.common.manager.SSServerManager;
 import io.xdd.blackscience.socksserver.proxy.handler.PromiseHandler;
-import io.xdd.blackscience.socksserver.proxy.handler.codec.*;
+import io.xdd.blackscience.socksserver.proxy.handler.ShadowSocksProxyHandler;
 import io.xdd.blackscience.socksserver.proxy.utils.ShadowUtils;
 import io.xdd.blackscience.socksserver.proxy.utils.SocksServerUtils;
 import org.slf4j.Logger;

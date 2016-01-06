@@ -13,7 +13,19 @@ public class HttpProxyHandler extends SimpleChannelInboundHandler<HttpObject>{
          * 正常的request
          * */
         if (object instanceof HttpRequest){
+            HttpRequest request=(HttpRequest)object;
+            /**
+             * 处理 Https代理
+             * */
+            if (request.getMethod().equals(HttpMethod.CONNECT)){
+                ctx.pipeline().remove(HttpProxyHandler.this);//移除
+                ctx.pipeline().addLast(new HttpsProxyConnectHandler());
+                return;
+            }
 
+            /**
+             * 替换
+             * */
         }
 
         /**
