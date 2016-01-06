@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package io.xdd.blackscience.socksserver.proxy.backend;
+package io.xdd.blackscience.socksserver.proxy.shadowsocks;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -29,7 +29,6 @@ import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.Promise;
 import io.xdd.blackscience.socksserver.proxy.handler.PromiseHandler;
 import io.xdd.blackscience.socksserver.proxy.handler.RelayHandler;
-import io.xdd.blackscience.socksserver.proxy.handler.codec.SSDecoder;
 import io.xdd.blackscience.socksserver.proxy.handler.codec.ShadowSocksRequest;
 import io.xdd.blackscience.socksserver.proxy.utils.SocksServerUtils;
 

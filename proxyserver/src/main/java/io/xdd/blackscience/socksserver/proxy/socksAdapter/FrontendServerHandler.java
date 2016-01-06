@@ -1,4 +1,4 @@
-package io.xdd.blackscience.socksserver.proxy.frontend;
+package io.xdd.blackscience.socksserver.proxy.socksadapter;
 
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;

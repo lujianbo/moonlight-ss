@@ -1,6 +1,10 @@
 package io.xdd.blackscience.socksserver.proxy.utils;
 
+import io.netty.handler.codec.socks.SocksAddressType;
+import io.netty.handler.codec.socks.SocksCmdRequest;
 import io.netty.util.internal.StringUtil;
+import io.xdd.blackscience.socksserver.proxy.handler.codec.ShadowSocksAddressType;
+import io.xdd.blackscience.socksserver.proxy.handler.codec.ShadowSocksRequest;
 
 public class ShadowUtils {
 
@@ -78,5 +82,27 @@ public class ShadowUtils {
 
     private static void appendHextet(StringBuilder sb, byte[] src, int i) {
         StringUtil.toHexString(sb, src, i << 1, 2);
+    }
+
+    public static ShadowSocksRequest transform(SocksCmdRequest request){
+        SocksAddressType addressType=request.addressType();
+        String host=request.host();
+        int port= request.port();
+        ShadowSocksRequest shadowSocksRequest = null;
+        switch (addressType) {
+            case IPv4: {
+                shadowSocksRequest=new ShadowSocksRequest(ShadowSocksAddressType.IPv4,host,port);
+                break;
+            }
+            case DOMAIN: {
+                shadowSocksRequest=new ShadowSocksRequest(ShadowSocksAddressType.hostname,host,port);
+                break;
+            }
+            case IPv6: {
+                shadowSocksRequest=new ShadowSocksRequest(ShadowSocksAddressType.IPv6,host,port);
+                break;
+            }
+        }
+        return shadowSocksRequest;
     }
 }

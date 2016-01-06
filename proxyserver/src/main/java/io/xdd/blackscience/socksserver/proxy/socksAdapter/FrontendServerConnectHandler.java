@@ -1,10 +1,8 @@
-package io.xdd.blackscience.socksserver.proxy.frontend;
+package io.xdd.blackscience.socksserver.proxy.socksadapter;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.socks.SocksAddressType;
 import io.netty.handler.codec.socks.SocksCmdRequest;
 import io.netty.handler.codec.socks.SocksCmdResponse;
 import io.netty.handler.codec.socks.SocksCmdStatus;
@@ -14,16 +12,11 @@ import io.netty.util.concurrent.Promise;
 import io.xdd.blackscience.socksserver.common.manager.SSServerInstance;
 import io.xdd.blackscience.socksserver.common.manager.SSServerManager;
 import io.xdd.blackscience.socksserver.proxy.handler.PromiseHandler;
-import io.xdd.blackscience.socksserver.proxy.handler.RelayHandler;
 import io.xdd.blackscience.socksserver.proxy.handler.codec.*;
+import io.xdd.blackscience.socksserver.proxy.utils.ShadowUtils;
 import io.xdd.blackscience.socksserver.proxy.utils.SocksServerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.crypto.NoSuchPaddingException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * 连接 shadowsocks 服务器
@@ -58,12 +51,8 @@ public class FrontendServerConnectHandler extends SimpleChannelInboundHandler<So
                                          * 移除当前的处理数据
                                          * */
                                         ctx.pipeline().remove(FrontendServerConnectHandler.this);
-                                        outboundChannel.pipeline().addLast(new SSEncoder(instance.getMethod(),instance.getPassword()));
-                                        outboundChannel.pipeline().addLast(new ShadowSocksRequestEncoder());
-                                        outboundChannel.write(transform(request));
-                                        ctx.pipeline().addLast(new RelayHandler(outboundChannel));
-                                        outboundChannel.pipeline().addLast(new SSDecoder(instance.getMethod(),instance.getPassword()));
-                                        outboundChannel.pipeline().addLast(new RelayHandler(ctx.channel()));
+
+                                        outboundChannel.pipeline().addLast(new ShadowSocksProxyHandler(ctx.channel(),ShadowUtils.transform(request),instance));
                                     });
                         } else {
                             ctx.channel().writeAndFlush(new SocksCmdResponse(SocksCmdStatus.FAILURE, request.addressType()));
@@ -109,25 +98,5 @@ public class FrontendServerConnectHandler extends SimpleChannelInboundHandler<So
         SocksServerUtils.closeOnFlush(ctx.channel());
     }
 
-    private ShadowSocksRequest transform(SocksCmdRequest request) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException {
-        SocksAddressType addressType=request.addressType();
-        String host=request.host();
-        int port= request.port();
-        ShadowSocksRequest shadowSocksRequest = null;
-        switch (addressType) {
-            case IPv4: {
-                shadowSocksRequest=new ShadowSocksRequest(ShadowSocksAddressType.IPv4,host,port);
-                break;
-            }
-            case DOMAIN: {
-                shadowSocksRequest=new ShadowSocksRequest(ShadowSocksAddressType.hostname,host,port);
-                break;
-            }
-            case IPv6: {
-                shadowSocksRequest=new ShadowSocksRequest(ShadowSocksAddressType.IPv6,host,port);
-                break;
-            }
-        }
-        return shadowSocksRequest;
-    }
+
 }

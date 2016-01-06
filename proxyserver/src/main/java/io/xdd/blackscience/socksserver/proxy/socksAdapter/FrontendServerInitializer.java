@@ -1,4 +1,4 @@
-package io.xdd.blackscience.socksserver.proxy.frontend;
+package io.xdd.blackscience.socksserver.proxy.socksadapter;
 
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
@@ -6,7 +6,6 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.socks.SocksInitRequestDecoder;
 import io.netty.handler.codec.socks.SocksMessageEncoder;
-import io.netty.handler.logging.LoggingHandler;
 
 @ChannelHandler.Sharable
 public class FrontendServerInitializer extends ChannelInitializer<SocketChannel> {
