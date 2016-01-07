@@ -13,19 +13,13 @@ import io.xdd.blackscience.socksserver.proxy.handler.codec.ShadowSocksRequestEnc
 public class ShadowSocksProxyHandler extends ChannelInboundHandlerAdapter {
 
     /**
-     * 需要桥接的Channel
-     * */
-    private Channel relayChannel;
-
-    /**
      * 目标信息
      * */
     private SSServerInstance instance;
 
     private ShadowSocksRequest request;
 
-    public ShadowSocksProxyHandler(Channel relayChannel,ShadowSocksRequest request,SSServerInstance instance){
-        this.relayChannel=relayChannel;
+    public ShadowSocksProxyHandler(ShadowSocksRequest request,SSServerInstance instance){
         this.instance=instance;
         this.request=request;
     }
@@ -39,11 +33,8 @@ public class ShadowSocksProxyHandler extends ChannelInboundHandlerAdapter {
 
         outboundChannel.channel().write(request);
 
-        relayChannel.pipeline().addLast(new RelayHandler(outboundChannel.channel()));
-
         outboundChannel.pipeline().addLast(new SSDecoder(instance.getMethod(),instance.getPassword()));
 
-        outboundChannel.pipeline().addLast(new RelayHandler(relayChannel));
     }
 
 }

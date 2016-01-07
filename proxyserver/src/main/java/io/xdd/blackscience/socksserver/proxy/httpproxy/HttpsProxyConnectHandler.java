@@ -21,6 +21,11 @@ public class HttpsProxyConnectHandler extends SimpleChannelInboundHandler<HttpRe
 
     private final Bootstrap b = new Bootstrap();
 
+    /**
+     * 通向目标的Channel
+     * */
+    private Channel outboundChannel;
+
     @Override
     public void channelRead0(final ChannelHandlerContext ctx, final HttpRequest request) throws Exception {
         Promise<Channel> promise = ctx.executor().newPromise();
@@ -74,10 +79,8 @@ public class HttpsProxyConnectHandler extends SimpleChannelInboundHandler<HttpRe
     public void processSuccess(final ChannelHandlerContext ctx, final HttpRequest request,final Channel outboundChannel){
         ctx.channel().writeAndFlush(respondCONNECTSuccessful()).addListener(future -> {
             ctx.pipeline().remove(HttpsProxyConnectHandler.this);
-
             //移除原先的Decode 和 Encoder
             clean(ctx);
-
             //relay
             ctx.pipeline().addLast(new RelayHandler(outboundChannel));
             outboundChannel.pipeline().addLast(new RelayHandler(ctx.channel()));
