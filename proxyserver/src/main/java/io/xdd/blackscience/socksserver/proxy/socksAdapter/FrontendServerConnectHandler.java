@@ -12,6 +12,7 @@ import io.netty.util.concurrent.Promise;
 import io.xdd.blackscience.socksserver.common.manager.SSServerInstance;
 import io.xdd.blackscience.socksserver.common.manager.SSServerManager;
 import io.xdd.blackscience.socksserver.proxy.handler.PromiseHandler;
+import io.xdd.blackscience.socksserver.proxy.handler.RelayHandler;
 import io.xdd.blackscience.socksserver.proxy.handler.ShadowSocksProxyHandler;
 import io.xdd.blackscience.socksserver.proxy.utils.ShadowUtils;
 import io.xdd.blackscience.socksserver.proxy.utils.SocksServerUtils;
@@ -51,8 +52,10 @@ public class FrontendServerConnectHandler extends SimpleChannelInboundHandler<So
                                          * 移除当前的处理数据
                                          * */
                                         ctx.pipeline().remove(FrontendServerConnectHandler.this);
+                                        outboundChannel.pipeline().addLast(new ShadowSocksProxyHandler(ShadowUtils.transform(request),instance));
 
-                                        outboundChannel.pipeline().addLast(new ShadowSocksProxyHandler(ctx.channel(),ShadowUtils.transform(request),instance));
+                                        ctx.pipeline().addLast(new RelayHandler(outboundChannel));
+                                        outboundChannel.pipeline().addLast(new RelayHandler(ctx.channel()));
                                     });
                         } else {
                             ctx.channel().writeAndFlush(new SocksCmdResponse(SocksCmdStatus.FAILURE, request.addressType()));
