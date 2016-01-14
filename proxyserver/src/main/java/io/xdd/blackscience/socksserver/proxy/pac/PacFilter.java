@@ -1,6 +1,8 @@
 package io.xdd.blackscience.socksserver.proxy.pac;
 
 
+import jdk.nashorn.internal.runtime.regexp.RegExp;
+
 import java.util.regex.Pattern;
 
 /**
@@ -8,23 +10,41 @@ import java.util.regex.Pattern;
  * */
 public class PacFilter {
 
-    //整理text
-    public String normalize(String text){
-        text = text.replace("/[^\\S ]/g", "");
 
-        if (Pattern.compile("/^\\s*!/").matcher(text).matches()){
-            // Don't remove spaces inside comments
-            return text.trim();
-        }else {
-            return text.replace("/\\s/g","");
-        }
+
+    /**
+     * 原始的规则
+     * */
+    private String text;
+
+    private Pattern regexp;
+
+    private String regexpSource;
+
+    /**
+     * 根据规则来构建过滤器
+     * */
+    private PacFilter(String text){
+        this.text=text;
     }
 
     /**
-     *
+     * 构建正则表达式
      * */
-    public String toRegExp(String text){
-        return text
+    public void regexp(String regexpSource){
+        if (regexpSource.length() >= 2 && regexpSource.charAt(0) == '/' && regexpSource.charAt(regexpSource.length() - 1) == '/')
+        {
+            this.regexp=Pattern.compile(regexpSource.substring(1, regexpSource.length() - 2),Pattern.CASE_INSENSITIVE);
+        }
+        else
+        {
+            this.regexpSource = regexpSource;
+        }
+    }
+
+    //根据规则生成 正则表达式
+    public Pattern getRegexp(){
+        String source=this.regexpSource
                 .replace("/\\*+/g", "*")        // remove multiple wildcards
                 .replace("/\\^\\|$/", "^")       // remove anchors following separator placeholder
                 .replace("/\\W/g", "\\$&")      // escape special symbols
@@ -36,7 +56,36 @@ public class PacFilter {
                 .replace("/\\\\\\|$/", "$")       // process anchor at expression end
                 .replace("/^(\\.\\*)/", "")      // remove leading wildcards
                 .replace("/(\\.\\*)$/", "");     // remove trailing wildcards
+
+        return Pattern.compile(source,Pattern.CASE_INSENSITIVE);
     }
+
+
+
+    //整理text
+    public String normalize(String text){
+        text = text.replace("/[^\\S ]/g", "");
+        if (Pattern.compile("/^\\s*!/").matcher(text).matches()){
+            // Don't remove spaces inside comments
+            return text.trim();
+        }else {
+            return text.replace("/\\s/g","");
+        }
+    }
+
+    /**
+     * 根据规则生成过滤器
+     * */
+    public void RegExpFilter(String text){
+        boolean blocking = true;
+        String origText = text;
+        if (text.indexOf("@@") == 0){
+            blocking = false;
+            text = text.substring(2);
+        }
+    }
+
+
 
 
     /**
@@ -44,5 +93,26 @@ public class PacFilter {
      * */
     public boolean matches(String url){
         return true;
+    }
+
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public void setRegexp(Pattern regexp) {
+        this.regexp = regexp;
+    }
+
+    public String getRegexpSource() {
+        return regexpSource;
+    }
+
+    public void setRegexpSource(String regexpSource) {
+        this.regexpSource = regexpSource;
     }
 }

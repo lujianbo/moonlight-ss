@@ -1,4 +1,4 @@
-package io.xdd.blackscience.socksserver.proxy.httpproxy;
+package io.xdd.blackscience.socksserver.proxy.httpadapter;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
