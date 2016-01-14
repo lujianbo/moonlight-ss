@@ -1,10 +1,8 @@
 package io.xdd.blackscience.socksserver.proxy.handler;
 
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.xdd.blackscience.socksserver.common.manager.SSServerInstance;
-import io.xdd.blackscience.socksserver.proxy.handler.RelayHandler;
 import io.xdd.blackscience.socksserver.proxy.handler.codec.SSDecoder;
 import io.xdd.blackscience.socksserver.proxy.handler.codec.SSEncoder;
 import io.xdd.blackscience.socksserver.proxy.handler.codec.ShadowSocksRequest;

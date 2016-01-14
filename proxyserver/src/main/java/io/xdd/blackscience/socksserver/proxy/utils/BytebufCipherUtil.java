@@ -2,7 +2,6 @@ package io.xdd.blackscience.socksserver.proxy.utils;
 
 import io.netty.buffer.ByteBuf;
 import io.xdd.blackscience.socksserver.common.crypto.SSCipher;
-import org.apache.commons.codec.binary.Hex;
 
 public class BytebufCipherUtil {
 

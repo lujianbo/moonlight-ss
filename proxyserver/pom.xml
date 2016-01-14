@@ -2,26 +2,27 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+
+
+    <parent>
+        <artifactId>proxy-rootpom</artifactId>
+        <groupId>io.xdd.blackscience</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>proxy-server</artifactId>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.xdd.blackscience</groupId>
-    <artifactId>proxy-server</artifactId>
-    <version>1.0-SNAPSHOT</version>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
     <dependencies>
+
+        <dependency>
+            <groupId>io.xdd.blackscience</groupId>
+            <artifactId>proxy-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
         <!-- netty -->
         <dependency>
             <groupId>io.netty</groupId>
@@ -52,11 +53,7 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.4</version>
         </dependency>
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>1.10</version>
-        </dependency>
+
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -64,12 +61,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--加解密 -->
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.53</version>
-        </dependency>
+
 
         <!-- slf4j -->
         <dependency>
