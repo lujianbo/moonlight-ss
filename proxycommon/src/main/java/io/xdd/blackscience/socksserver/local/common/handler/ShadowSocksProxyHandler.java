@@ -2,11 +2,11 @@ package io.xdd.blackscience.socksserver.local.common.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.xdd.blackscience.socksserver.local.manager.SSServerInstance;
 import io.xdd.blackscience.socksserver.local.common.handler.codec.SSDecoder;
 import io.xdd.blackscience.socksserver.local.common.handler.codec.SSEncoder;
 import io.xdd.blackscience.socksserver.local.common.handler.codec.ShadowSocksRequest;
 import io.xdd.blackscience.socksserver.local.common.handler.codec.ShadowSocksRequestEncoder;
+import io.xdd.blackscience.socksserver.local.common.handler.manager.SSServerInstance;
 
 public class ShadowSocksProxyHandler extends ChannelInboundHandlerAdapter {
 

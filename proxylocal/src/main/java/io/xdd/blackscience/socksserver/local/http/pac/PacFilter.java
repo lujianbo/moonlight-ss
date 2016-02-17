@@ -1,4 +1,4 @@
-package io.xdd.blackscience.socksserver.local.pac;
+package io.xdd.blackscience.socksserver.local.http.pac;
 
 
 import java.util.regex.Pattern;

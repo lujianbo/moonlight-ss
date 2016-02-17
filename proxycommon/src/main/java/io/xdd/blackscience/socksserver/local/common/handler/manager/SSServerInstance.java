@@ -1,4 +1,4 @@
-package io.xdd.blackscience.socksserver.local.manager;
+package io.xdd.blackscience.socksserver.local.common.handler.manager;
 
 
 /**

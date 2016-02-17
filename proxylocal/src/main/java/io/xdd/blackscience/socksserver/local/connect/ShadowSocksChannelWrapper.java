@@ -1,7 +1,7 @@
 package io.xdd.blackscience.socksserver.local.connect;
 
 import io.netty.channel.Channel;
-import io.xdd.blackscience.socksserver.local.manager.SSServerInstance;
+import io.xdd.blackscience.socksserver.local.common.handler.manager.SSServerInstance;
 import io.xdd.blackscience.socksserver.local.common.handler.codec.SSDecoder;
 import io.xdd.blackscience.socksserver.local.common.handler.codec.SSEncoder;
 import io.xdd.blackscience.socksserver.local.common.handler.codec.ShadowSocksRequest;

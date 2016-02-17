@@ -1,4 +1,4 @@
-package io.xdd.blackscience.socksserver.local.socksadapter;
+package io.xdd.blackscience.socksserver.local.socks;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -9,8 +9,8 @@ import io.netty.handler.codec.socks.SocksCmdStatus;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.Promise;
-import io.xdd.blackscience.socksserver.local.manager.SSServerInstance;
-import io.xdd.blackscience.socksserver.local.manager.SSServerManager;
+import io.xdd.blackscience.socksserver.local.common.handler.manager.SSServerInstance;
+import io.xdd.blackscience.socksserver.local.common.handler.manager.SSServerManager;
 import io.xdd.blackscience.socksserver.local.common.handler.PromiseHandler;
 import io.xdd.blackscience.socksserver.local.common.handler.RelayHandler;
 import io.xdd.blackscience.socksserver.local.common.handler.ShadowSocksProxyHandler;

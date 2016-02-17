@@ -2,7 +2,7 @@ package io.xdd.blackscience.socksserver.local.context;
 
 
 import io.xdd.blackscience.socksserver.local.ProxyServer;
-import io.xdd.blackscience.socksserver.local.socksadapter.FrontendServerInitializer;
+import io.xdd.blackscience.socksserver.local.socks.FrontendServerInitializer;
 
 /**
  * web context to Manager ProxyServer

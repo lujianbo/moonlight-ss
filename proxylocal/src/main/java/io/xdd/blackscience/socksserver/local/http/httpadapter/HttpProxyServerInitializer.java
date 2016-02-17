@@ -1,4 +1,4 @@
-package io.xdd.blackscience.socksserver.local.httpadapter;
+package io.xdd.blackscience.socksserver.local.http.httpadapter;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
