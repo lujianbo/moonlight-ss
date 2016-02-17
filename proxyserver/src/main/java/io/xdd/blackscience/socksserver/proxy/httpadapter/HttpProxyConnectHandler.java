@@ -18,9 +18,7 @@ public class HttpProxyConnectHandler extends SimpleChannelInboundHandler<HttpObj
      * */
     private Channel outboundChannel;
 
-    public HttpProxyConnectHandler(){
-
-    }
+    public HttpProxyConnectHandler(){}
 
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
