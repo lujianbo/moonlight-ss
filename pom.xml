@@ -15,6 +15,7 @@
     <modules>
         <module>proxyserver</module>
         <module>proxycommon</module>
+        <module>proxylocal</module>
     </modules>
 
     <build>
