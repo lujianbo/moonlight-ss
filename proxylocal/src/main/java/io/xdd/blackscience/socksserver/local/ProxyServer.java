@@ -8,6 +8,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.xdd.blackscience.socksserver.local.socks.FrontendServerInitializer;
 
 /**
  *  socks 服务器的启动类
@@ -43,6 +44,11 @@ public final class ProxyServer {
     public void stop(){
         bossGroup.shutdownGracefully();
         workerGroup.shutdownGracefully();
+    }
+
+    public static void main(String[] args) {
+        ProxyServer proxyServer=new ProxyServer(new FrontendServerInitializer());
+        proxyServer.start();
     }
 
 }

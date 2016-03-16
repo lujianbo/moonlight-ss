@@ -23,21 +23,11 @@ public class HttpProxyHandler extends SimpleChannelInboundHandler<HttpObject>{
                 return;
             }
 
-            /**
-             * 替换
-             * */
-
         }
-
         /**
-         * 含有 chunked 的request
+         * 非https
          * */
-        if (object instanceof HttpContent){
+        ctx.pipeline().addLast(new HttpProxyConnectHandler());
 
-        }
-
-        if (object instanceof LastHttpContent){
-
-        }
     }
 }
