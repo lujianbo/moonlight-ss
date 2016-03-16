@@ -1,4 +1,4 @@
-package io.xdd.blackscience.socksserver.local.http.pac;
+package io.xdd.blackscience.socksserver.local.common.pac;
 
 
 import java.util.regex.Pattern;
@@ -20,7 +20,7 @@ public class PacFilter {
     /**
      * 根据规则来构建过滤器
      * */
-    private PacFilter(String text){
+    public PacFilter(String text){
         this.text=text;
     }
 
@@ -90,7 +90,6 @@ public class PacFilter {
     public boolean matches(String url){
         return true;
     }
-
 
     public String getText() {
         return text;

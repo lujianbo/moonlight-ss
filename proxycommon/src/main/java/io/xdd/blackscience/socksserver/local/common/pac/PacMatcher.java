@@ -1,5 +1,6 @@
-package io.xdd.blackscience.socksserver.local.http.pac;
+package io.xdd.blackscience.socksserver.local.common.pac;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -17,7 +18,7 @@ public class PacMatcher {
     /**
      * 关键字和 filter 之间的映射
      * */
-    private Map<String,List<PacFilter>> filterByKeyword;
+    private Map<String,List<PacFilter>> filterByKeyword=new HashMap<>();
 
     /**
      *

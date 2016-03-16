@@ -1,4 +1,4 @@
-package io.xdd.blackscience.socksserver.local.http.pac;
+package io.xdd.blackscience.socksserver.local.common.pac;
 
 
 import java.util.Map;
