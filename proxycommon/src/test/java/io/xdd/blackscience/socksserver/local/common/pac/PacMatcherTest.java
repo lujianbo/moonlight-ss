@@ -7,13 +7,5 @@ import static org.junit.Assert.*;
  */
 public class PacMatcherTest {
 
-    @org.junit.Test
-    public void testFindKeyword() throws Exception {
 
-        PacMatcher matcher=new PacMatcher();
-        PacFilter filter=new PacFilter("||365safego.com^");
-        String result=matcher.findKeyword(filter);
-        System.out.println(result);
-
-    }
 }
