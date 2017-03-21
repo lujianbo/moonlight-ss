@@ -30,43 +30,14 @@ public class ShadowSocksConnectHandler extends SimpleChannelInboundHandler<Socks
     @Override
     public void channelRead0(final ChannelHandlerContext ctx, final SocksCmdRequest request) throws Exception {
         SSServerInstance instance = shadowSocksServerManager.getOne();
-//        Promise<Channel> promise = ctx.executor().newPromise();
-//        promise.addListener(
-//                new GenericFutureListener<Future<Channel>>() {
-//                    @Override
-//                    public void operationComplete(final Future<Channel> future) throws Exception {
-//                        final Channel outboundChannel = future.getNow();
-//                        if (future.isSuccess()) {
-//                            ctx.channel()
-//                                    .writeAndFlush(new SocksCmdResponse(SocksCmdStatus.SUCCESS, request.addressType()))
-//                                    .addListener(channelFuture -> {
-//                                        //移除当前的处理数据
-//                                        ctx.pipeline().remove(ShadowSocksConnectHandler.this);
-//                                        outboundChannel.pipeline().addLast(new ShadowSocksProxyHandler(ShadowUtils.transform(request), instance));
-//
-//                                        ctx.pipeline().addLast(new RelayHandler(outboundChannel));
-//                                        outboundChannel.pipeline().addLast(new RelayHandler(ctx.channel()));
-//                                    });
-//                        } else {
-//                            ctx.channel().writeAndFlush(new SocksCmdResponse(SocksCmdStatus.FAILURE, request.addressType()));
-//                            NetUtils.closeOnFlush(ctx.channel());
-//                        }
-//                    }
-//                });
 
-        /**
-         * 配置Handler
-         * */
         final Channel inboundChannel = ctx.channel();
         b.group(inboundChannel.eventLoop())
                 .channel(NioSocketChannel.class)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
                 .option(ChannelOption.SO_KEEPALIVE, true);
 
-
-        /*
-         * 连接目标服务器
-         * */
+        //连接目标服务器
         b.connect(instance.getAddress(), instance.getPort())
                 .addListener((ChannelFutureListener) future -> {
             if (future.isSuccess()) {
@@ -83,7 +54,6 @@ public class ShadowSocksConnectHandler extends SimpleChannelInboundHandler<Socks
                                 NetUtils.closeOnFlush(future.channel());
                                 NetUtils.closeOnFlush(ctx.channel());
                             }
-
                         });
             } else {
                 // Close the connection if the connection attempt has failed.
@@ -97,6 +67,5 @@ public class ShadowSocksConnectHandler extends SimpleChannelInboundHandler<Socks
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         NetUtils.closeOnFlush(ctx.channel());
     }
-
 
 }

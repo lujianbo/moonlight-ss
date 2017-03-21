@@ -16,23 +16,6 @@ public final class ShadowSocksRequestHandler extends SimpleChannelInboundHandler
 
     @Override
     public void channelRead0(final ChannelHandlerContext ctx, final ShadowSocksRequest request) throws Exception {
-        Promise<Channel> promise = ctx.executor().newPromise();
-        promise.addListener(
-                new GenericFutureListener<Future<Channel>>() {
-                    @Override
-                    public void operationComplete(Future<Channel> future) throws Exception {
-                        final Channel outboundChannel = future.getNow();
-                        if (future.isSuccess()) {
-                            ctx.pipeline().remove(ShadowSocksRequestHandler.this);
-                            //交换数据
-                            ctx.pipeline().addLast(new RelayHandler(outboundChannel));
-                            outboundChannel.pipeline().addLast(new RelayHandler(ctx.channel()));
-                        } else {
-                            NetUtils.closeOnFlush(ctx.channel());
-                        }
-                    }
-                });
-
 
         final Channel inboundChannel = ctx.channel();
 
