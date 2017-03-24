@@ -2,6 +2,7 @@ package com.lujianbo.app.shadowsocks.local.connector.socks;
 
 import com.lujianbo.app.shadowsocks.common.utils.NetUtils;
 import com.lujianbo.app.shadowsocks.local.handler.ShadowSocksConnectHandler;
+import com.lujianbo.app.shadowsocks.local.manager.SSServerInstance;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.socks.*;
@@ -22,7 +23,6 @@ public class SocksRequestHandler extends SimpleChannelInboundHandler<SocksReques
             case CMD:  //代理
                 SocksCmdRequest req = (SocksCmdRequest) socksRequest;
                 if (req.cmdType() == SocksCmdType.CONNECT) {
-                    ctx.pipeline().addLast(new ShadowSocksConnectHandler());
                     ctx.pipeline().remove(this);
                     ctx.fireChannelRead(socksRequest);
                 } else {

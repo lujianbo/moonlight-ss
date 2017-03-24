@@ -1,9 +1,5 @@
 package com.lujianbo.app.shadowsocks.common.utils;
 
-import com.lujianbo.app.shadowsocks.common.codec.ShadowSocksAddressType;
-import com.lujianbo.app.shadowsocks.common.codec.ShadowSocksRequest;
-import io.netty.handler.codec.socks.SocksAddressType;
-import io.netty.handler.codec.socks.SocksCmdRequest;
 import io.netty.util.internal.StringUtil;
 
 public class ShadowUtils {
@@ -84,27 +80,5 @@ public class ShadowUtils {
         StringUtil.toHexString(sb, src, i << 1, 2);
     }
 
-    public static ShadowSocksRequest transform(SocksCmdRequest request) {
-        SocksAddressType addressType = request.addressType();
-        String host = request.host();
-        int port = request.port();
-        ShadowSocksRequest shadowSocksRequest = null;
-        switch (addressType) {
-            case IPv4: {
-                shadowSocksRequest = new ShadowSocksRequest(ShadowSocksAddressType.IPv4, host, port);
-                break;
-            }
-            case DOMAIN: {
-                shadowSocksRequest = new ShadowSocksRequest(ShadowSocksAddressType.hostname, host, port);
-                break;
-            }
-            case IPv6: {
-                shadowSocksRequest = new ShadowSocksRequest(ShadowSocksAddressType.IPv6, host, port);
-                break;
-            }
-            case UNKNOWN:
-                break;
-        }
-        return shadowSocksRequest;
-    }
+
 }

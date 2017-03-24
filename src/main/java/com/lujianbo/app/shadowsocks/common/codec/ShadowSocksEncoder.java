@@ -1,6 +1,7 @@
 package com.lujianbo.app.shadowsocks.common.codec;
 
 import com.lujianbo.app.shadowsocks.common.crypto.ShadowSocksCipher;
+import com.lujianbo.app.shadowsocks.common.crypto.ShadowSocksCrypto;
 import com.lujianbo.app.shadowsocks.common.utils.BytebufCipherUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -11,15 +12,17 @@ import io.netty.channel.ChannelPromise;
 /**
  * 对流过的数据都进行cipher 的 update操作
  */
-public class SSEncoder extends ChannelOutboundHandlerAdapter {
+public class ShadowSocksEncoder extends ChannelOutboundHandlerAdapter {
 
     private transient ShadowSocksCipher encryptCipher;
 
     private boolean iv_sent = false;
 
+    private ShadowSocksCrypto crypto;
 
-    public SSEncoder(String method, String password) {
-        encryptCipher = new ShadowSocksCipher(method, password, true);
+    public ShadowSocksEncoder(String password,ShadowSocksCrypto crypto) {
+        this.crypto=crypto;
+        encryptCipher = new ShadowSocksCipher(crypto.generatorIvParameter(),crypto, password, true);
     }
 
     @Override

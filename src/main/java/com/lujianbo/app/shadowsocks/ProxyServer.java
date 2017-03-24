@@ -14,15 +14,16 @@ import io.netty.handler.logging.LoggingHandler;
  */
 public final class ProxyServer {
 
-    static final int PORT = Integer.parseInt(System.getProperty("port", "7778"));
-
     private EventLoopGroup bossGroup = new NioEventLoopGroup(1);
     private EventLoopGroup workerGroup = new NioEventLoopGroup();
 
     private ChannelInitializer<SocketChannel> initializer;
 
-    public ProxyServer(ChannelInitializer<SocketChannel> initializer) {
+    private int port;
+
+    public ProxyServer(int port,ChannelInitializer<SocketChannel> initializer) {
         this.initializer = initializer;
+        this.port=port;
     }
 
     public void start() {
@@ -32,12 +33,15 @@ public final class ProxyServer {
                     .channel(NioServerSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
                     .childHandler(initializer);
-            b.bind(PORT).sync().channel().closeFuture().sync();
+            b.bind(port).sync().addListener(future -> {
+                if (future.isSuccess()){
+                    System.out.println("启动成功");
+                }else {
+                    System.out.println("启动失败");
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            bossGroup.shutdownGracefully();
-            workerGroup.shutdownGracefully();
         }
     }
 

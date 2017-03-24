@@ -27,6 +27,7 @@ public final class ShadowSocksRequestHandler extends SimpleChannelInboundHandler
         b.connect(request.host(), request.port()).addListener((ChannelFutureListener) future -> {
             final Channel outboundChannel = future.channel();
             if (future.isSuccess()) {
+                //remove
                 ctx.pipeline().remove(ShadowSocksRequestHandler.this);
                 //两个 channel上的数据进行交换
                 outboundChannel.pipeline().addLast(new RelayHandler(ctx.channel()));

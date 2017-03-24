@@ -1,0 +1,5 @@
+address: 192.168.56.102
+localPort: 8388
+serverPort: 7788
+method: aes-256-cfb
+password: password

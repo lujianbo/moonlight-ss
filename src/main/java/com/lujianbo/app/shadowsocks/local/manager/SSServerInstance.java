@@ -1,4 +1,4 @@
-package com.lujianbo.app.shadowsocks.common.manager;
+package com.lujianbo.app.shadowsocks.local.manager;
 
 
 /**
@@ -13,6 +13,13 @@ public class SSServerInstance {
     private String method;
 
     private String password;
+
+    public SSServerInstance(String address, int port, String method, String password) {
+        this.address = address;
+        this.port = port;
+        this.method = method;
+        this.password = password;
+    }
 
     public String getAddress() {
         return address;

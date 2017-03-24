@@ -16,24 +16,19 @@ public class ShadowSocksCipher {
 
     private final byte[] iv;
 
-    private final String method;
+    private ShadowSocksCrypto shadowSocksCrypto;
 
     private final String password;
 
     private final boolean forEncryption;
 
-    public ShadowSocksCipher(byte[] iv, String method, String password, boolean forEncryption) {
+    public ShadowSocksCipher(byte[] iv, ShadowSocksCrypto shadowSocksCrypto, String password, boolean forEncryption) {
         this.iv = iv;
-        this.method = method;
         this.password = password;
         this.forEncryption = forEncryption;
-        ShadowSocksCiphersConstant.SSCrypto ssCrypto = ShadowSocksCiphersConstant.getSSCrypto(method);
-        this.streamCipher = ssCrypto.getSupplier().get();
-        streamCipher.init(forEncryption, new ParametersWithIV(new KeyParameter(EVP_BytesToKey(password, ssCrypto.getKeyLength())), iv));
-    }
-
-    public ShadowSocksCipher(String method, String password, boolean forEncryption) {
-        this(generatorIvParameter(ShadowSocksCiphersConstant.getSSCrypto(method).getIvLength()), method, password, forEncryption);
+        this.shadowSocksCrypto=shadowSocksCrypto;
+        this.streamCipher = shadowSocksCrypto.getSupplier().get();
+        streamCipher.init(forEncryption, new ParametersWithIV(new KeyParameter(EVP_BytesToKey(password, shadowSocksCrypto.getKeyLength())), iv));
     }
 
     public byte[] update(byte[] data) {
@@ -58,10 +53,6 @@ public class ShadowSocksCipher {
         return iv;
     }
 
-    public String getMethod() {
-        return method;
-    }
-
     public String getPassword() {
         return password;
     }
@@ -70,20 +61,11 @@ public class ShadowSocksCipher {
         return forEncryption;
     }
 
-    /**
-     * 返回随机IV
-     */
-    public static byte[] generatorIvParameter(int length) {
-        SecureRandom random = new SecureRandom();
-        byte[] bytes = new byte[length];
-        random.nextBytes(bytes);
-        return bytes;
-    }
 
     /**
      * MD5 迭代 password 直到 长度满足 key_len
      */
-    public static byte[] EVP_BytesToKey(String password, int length) {
+    private byte[] EVP_BytesToKey(String password, int length) {
         byte[] passwordBytes = password.getBytes();
         byte[] temp = new byte[passwordBytes.length + 16];
         byte[] result = new byte[length];//32byte 的key
