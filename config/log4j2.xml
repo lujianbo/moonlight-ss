@@ -20,7 +20,7 @@
     </Appenders>
     <Loggers>
         <Root level="WARN">
-            <AppenderRef ref="LOG"/>
+            <AppenderRef ref="STDOUT"/>
         </Root>
     </Loggers>
 </Configuration>
