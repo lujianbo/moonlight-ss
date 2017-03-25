@@ -7,7 +7,7 @@ package com.lujianbo.app.shadowsocks.common.codec;
 public enum ShadowSocksAddressType {
 
     IPv4((byte) 0x01),
-    IPv6((byte) 0x02),
+    IPv6((byte) 0x04),
     hostname((byte) 0x03),
     UNKNOWN((byte) 0xff);
 

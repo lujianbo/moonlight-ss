@@ -5,6 +5,7 @@ import com.lujianbo.app.shadowsocks.common.codec.ShadowSocksRequestEncoder;
 import com.lujianbo.app.shadowsocks.common.crypto.ShadowSocksContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.logging.LoggingHandler;
 
 /**
  * Created by jianbo on 2017/3/25.

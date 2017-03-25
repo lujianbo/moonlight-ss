@@ -1,6 +1,5 @@
 package com.lujianbo.app.shadowsocks.common.codec;
 
-import com.lujianbo.app.shadowsocks.common.crypto.ShadowSocksCiphersConstant;
 import com.lujianbo.app.shadowsocks.common.crypto.ShadowSocksContext;
 import io.netty.channel.CombinedChannelDuplexHandler;
 

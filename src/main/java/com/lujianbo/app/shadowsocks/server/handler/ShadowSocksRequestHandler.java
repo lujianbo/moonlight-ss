@@ -1,45 +1,44 @@
 package com.lujianbo.app.shadowsocks.server.handler;
 
+import com.lujianbo.app.shadowsocks.common.codec.SSRequestDecoder;
 import com.lujianbo.app.shadowsocks.common.codec.ShadowSocksRequest;
 import com.lujianbo.app.shadowsocks.common.handler.RelayHandler;
 import com.lujianbo.app.shadowsocks.common.utils.NetUtils;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
-import io.netty.util.concurrent.Promise;
+import io.netty.handler.logging.LoggingHandler;
 
-public final class ShadowSocksRequestHandler extends SimpleChannelInboundHandler<ShadowSocksRequest> {
+public final class ShadowSocksRequestHandler extends ChannelInboundHandlerAdapter {
 
-    private final Bootstrap b = new Bootstrap();
+    private Channel outboundChannel=null;
+
+    private static EventLoopGroup executors=new NioEventLoopGroup();
 
     @Override
-    public void channelRead0(final ChannelHandlerContext ctx, final ShadowSocksRequest request) throws Exception {
-
-        final Channel inboundChannel = ctx.channel();
-
-        b.group(inboundChannel.eventLoop())
-                .channel(NioSocketChannel.class)
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
-                .option(ChannelOption.SO_KEEPALIVE, true);
-        //向目标端口发起连接
-        b.connect(request.host(), request.port()).addListener((ChannelFutureListener) future -> {
-            final Channel outboundChannel = future.channel();
-            if (future.isSuccess()) {
-                //remove
-                ctx.pipeline().remove(ShadowSocksRequestHandler.this);
-                //两个 channel上的数据进行交换
-                outboundChannel.pipeline().addLast(new RelayHandler(ctx.channel()));
-                ctx.pipeline().addLast(new RelayHandler(outboundChannel));
-            } else {
-                NetUtils.closeOnFlush(ctx.channel());
-            }
-        });
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        if (msg instanceof ShadowSocksRequest){
+            ShadowSocksRequest request=(ShadowSocksRequest) msg;
+            Bootstrap b = new Bootstrap();
+            b.group(executors)
+                    .channel(NioSocketChannel.class)
+                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
+                    .option(ChannelOption.SO_KEEPALIVE, true)
+                    .handler(new RelayHandler(ctx.channel()));
+            outboundChannel=b.connect(request.host(), request.port()).sync().channel();
+            ctx.pipeline().remove(SSRequestDecoder.class);
+            ctx.pipeline().remove(ShadowSocksRequestHandler.this);
+            ctx.pipeline().addLast(new RelayHandler(outboundChannel));
+        }else{
+            // no in  here
+        }
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
         NetUtils.closeOnFlush(ctx.channel());
     }
 }

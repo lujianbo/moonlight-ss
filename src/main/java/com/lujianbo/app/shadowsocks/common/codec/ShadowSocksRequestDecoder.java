@@ -18,8 +18,6 @@ public class ShadowSocksRequestDecoder extends ReplayingDecoder<State> {
 
     private String address;
 
-    private int port;
-
     public ShadowSocksRequestDecoder() {
         super(State.READ_ADDRESSTYPE);
     }
@@ -31,7 +29,6 @@ public class ShadowSocksRequestDecoder extends ReplayingDecoder<State> {
                 byte type = in.readByte();
                 addressType = ShadowSocksAddressType.valueOf(type);
                 checkpoint(State.READ_ADDRESS);
-                break;
             case READ_ADDRESS: {
                 switch (addressType) {
                     case IPv4:
@@ -48,24 +45,28 @@ public class ShadowSocksRequestDecoder extends ReplayingDecoder<State> {
                         break;
                 }
                 checkpoint(State.READ_PORT);
-                break;
             }
             case READ_PORT:
-                port = in.readUnsignedShort();
-                checkpoint(State.READ_ADDRESSTYPE);
+                int port = in.readUnsignedShort();
+                out.add(new ShadowSocksRequest(addressType, address, port));
+                checkpoint(State.READ_DATA);
+                break;
+            case READ_DATA:
+                if (super.actualReadableBytes()>0){
+                    ByteBuf msg=in.readBytes(super.actualReadableBytes());
+                    out.add(msg);
+                }
+                checkpoint(State.READ_DATA);
                 break;
             default:
-
                 break;
         }
-        //该解码只执行一次，因此执行后将会移除自身
-        ctx.pipeline().remove(ShadowSocksRequestDecoder.this);
-        out.add(new ShadowSocksRequest(addressType, address, port));
     }
 
     enum State {
         READ_ADDRESSTYPE,
         READ_ADDRESS,
         READ_PORT,
+        READ_DATA
     }
 }

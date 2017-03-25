@@ -36,7 +36,7 @@ public class ShadowSocksEncoder extends ChannelOutboundHandlerAdapter {
         ByteBuf temp = ctx.alloc().buffer(in.capacity());
         BytebufCipherUtil.update(encryptCipher, in, temp);//update 解密
         out.writeBytes(temp);
-        ctx.write(out);
+        ctx.writeAndFlush(out);
     }
 
 }

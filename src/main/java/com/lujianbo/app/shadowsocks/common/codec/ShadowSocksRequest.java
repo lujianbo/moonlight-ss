@@ -33,24 +33,24 @@ public class ShadowSocksRequest {
     }
 
     public byte[] encodeToBytes() throws IOException {
-        ByteArrayOutputStream byteBuf = new ByteArrayOutputStream();
-        byteBuf.write(addressType.byteValue());
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        byteArrayOutputStream.write(addressType.byteValue());
         switch (addressType) {
             case IPv4:
-                byteBuf.write(NetUtil.createByteArrayFromIpAddressString(host));
+                byteArrayOutputStream.write(NetUtil.createByteArrayFromIpAddressString(host));
                 break;
             case hostname:
-                byteBuf.write(host.length());
-                byteBuf.write(host.getBytes(CharsetUtil.US_ASCII));
+                byteArrayOutputStream.write((byte)host.length());
+                byteArrayOutputStream.write(host.getBytes(CharsetUtil.US_ASCII));
                 break;
             case IPv6:
-                byteBuf.write(NetUtil.createByteArrayFromIpAddressString(host));
+                byteArrayOutputStream.write(NetUtil.createByteArrayFromIpAddressString(host));
                 break;
             default:
                 break;
         }
-        byteBuf.write((short) port);
-        return byteBuf.toByteArray();
+        byteArrayOutputStream.write((short) port);
+        return byteArrayOutputStream.toByteArray();
     }
 
     public void encodeAsByteBuf(ByteBuf byteBuf) {

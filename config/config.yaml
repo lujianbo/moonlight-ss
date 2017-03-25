@@ -1,4 +1,4 @@
-address: 192.168.56.102
+address: 127.0.0.1
 localPort: 8388
 serverPort: 7788
 method: aes-256-cfb

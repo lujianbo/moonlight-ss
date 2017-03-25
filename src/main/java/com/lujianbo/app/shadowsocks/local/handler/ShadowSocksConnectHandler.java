@@ -39,16 +39,15 @@ public class ShadowSocksConnectHandler extends SimpleChannelInboundHandler<Socks
         b.connect(instance.getAddress(), instance.getPort())
                 .addListener((ChannelFutureListener) future -> {
             if (future.isSuccess()) {
+                future.channel().pipeline().addLast(new RelayHandler(ctx.channel()));
                 ctx.channel().writeAndFlush(new SocksCmdResponse(SocksCmdStatus.SUCCESS, request.addressType()))
                         .addListener(channelFuture -> {
                             if (channelFuture.isSuccess()){
                                 //移除当前的处理数据
                                 ctx.pipeline().remove(ShadowSocksConnectHandler.this);
                                 ctx.pipeline().remove(SocksMessageEncoder.class);
-
-                                future.channel().pipeline().addLast(new RelayHandler(ctx.channel()));
-                                ctx.pipeline().addLast(new RelayHandler(future.channel()));
                                 //写入request
+                                ctx.pipeline().addLast(new RelayHandler(future.channel()));
                                 future.channel().write(buildShadowSocksRequest(request));
                             }else {
                                 NetUtils.closeOnFlush(future.channel());
