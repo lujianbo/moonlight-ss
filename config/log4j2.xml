@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="DEBUG">
+<Configuration status="WARN">
 
     <Properties>
         <Property name="baseDir">../log</Property>
     </Properties>
     <Appenders>
-        <File name="log" fileName="${baseDir}/app.log">
+        <File name="LOG" fileName="${baseDir}/app.log">
             <PatternLayout>
                 <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
             </PatternLayout>
@@ -19,8 +19,8 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Root level="DEBUG">
-            <AppenderRef ref="STDOUT"/>
+        <Root level="WARN">
+            <AppenderRef ref="LOG"/>
         </Root>
     </Loggers>
 </Configuration>

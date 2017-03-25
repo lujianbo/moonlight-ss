@@ -40,7 +40,6 @@ public class SocksRequestHandler extends SimpleChannelInboundHandler<SocksReques
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable throwable) {
-        throwable.printStackTrace();
         NetUtils.closeOnFlush(ctx.channel());
     }
 }

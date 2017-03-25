@@ -32,7 +32,6 @@ public final class ShadowSocksRequestHandler extends ChannelInboundHandlerAdapte
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
         NetUtils.closeOnFlush(ctx.channel());
     }
 }
