@@ -1,19 +1,15 @@
 package com.lujianbo.app.shadowsocks.server.handler;
 
-import com.lujianbo.app.shadowsocks.common.codec.SSRequestDecoder;
 import com.lujianbo.app.shadowsocks.common.codec.ShadowSocksRequest;
 import com.lujianbo.app.shadowsocks.common.handler.RelayHandler;
 import com.lujianbo.app.shadowsocks.common.utils.NetUtils;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LoggingHandler;
 
 public final class ShadowSocksRequestHandler extends ChannelInboundHandlerAdapter {
-
-    private Channel outboundChannel=null;
 
     private static EventLoopGroup executors=new NioEventLoopGroup();
 
@@ -27,9 +23,9 @@ public final class ShadowSocksRequestHandler extends ChannelInboundHandlerAdapte
                     .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
                     .option(ChannelOption.SO_KEEPALIVE, true)
                     .handler(new RelayHandler(ctx.channel()));
-            outboundChannel=b.connect(request.host(), request.port()).sync().channel();
-            ctx.pipeline().remove(SSRequestDecoder.class);
+            Channel outboundChannel = b.connect(request.host(), request.port()).sync().channel();
             ctx.pipeline().remove(ShadowSocksRequestHandler.this);
+            outboundChannel.pipeline().addFirst(new LoggingHandler());
             ctx.pipeline().addLast(new RelayHandler(outboundChannel));
         }else{
             // no in  here

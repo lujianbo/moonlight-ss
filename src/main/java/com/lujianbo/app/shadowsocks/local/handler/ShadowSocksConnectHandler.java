@@ -8,6 +8,7 @@ import com.lujianbo.app.shadowsocks.local.manager.SSServerInstance;
 import com.lujianbo.app.shadowsocks.common.utils.NetUtils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.socks.*;
 
@@ -17,7 +18,9 @@ import io.netty.handler.codec.socks.*;
  */
 public class ShadowSocksConnectHandler extends SimpleChannelInboundHandler<SocksCmdRequest> {
 
-    private final Bootstrap b = new Bootstrap();
+
+
+    private static EventLoopGroup executors=new NioEventLoopGroup();
 
     private SSServerInstance instance;
 
@@ -26,10 +29,9 @@ public class ShadowSocksConnectHandler extends SimpleChannelInboundHandler<Socks
     }
 
     @Override
-    public void channelRead0(final ChannelHandlerContext ctx, final SocksCmdRequest request) throws Exception {
-
-        final Channel inboundChannel = ctx.channel();
-        b.group(inboundChannel.eventLoop())
+    public void channelRead0(ChannelHandlerContext ctx, SocksCmdRequest request) throws Exception {
+        Bootstrap b = new Bootstrap();
+        b.group(executors)
                 .channel(NioSocketChannel.class)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
                 .option(ChannelOption.SO_KEEPALIVE, true)
