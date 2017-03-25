@@ -1,17 +1,17 @@
-package com.lujianbo.app.shadowsocks.local.handler;
+package com.lujianbo.app.shadowsocks.local.connector.socks;
 
 import com.lujianbo.app.shadowsocks.common.codec.ShadowSocksAddressType;
 import com.lujianbo.app.shadowsocks.common.codec.ShadowSocksRequest;
 import com.lujianbo.app.shadowsocks.common.crypto.ShadowSocksContext;
 import com.lujianbo.app.shadowsocks.common.handler.RelayHandler;
 import com.lujianbo.app.shadowsocks.common.utils.NetUtils;
-import com.lujianbo.app.shadowsocks.local.manager.SSServerInstance;
+import com.lujianbo.app.shadowsocks.local.handler.ShadowSocksClientInitializer;
+import com.lujianbo.app.shadowsocks.local.manager.ShadowSocksServerInfo;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.socks.*;
-
 
 /**
  * 连接 shadowsocks 服务器
@@ -21,9 +21,9 @@ public class ShadowSocksConnectHandler extends SimpleChannelInboundHandler<Socks
 
     private static EventLoopGroup executors = new NioEventLoopGroup();
 
-    private SSServerInstance instance;
+    private ShadowSocksServerInfo instance;
 
-    public ShadowSocksConnectHandler(SSServerInstance instance) {
+    public ShadowSocksConnectHandler(ShadowSocksServerInfo instance) {
         this.instance = instance;
     }
 

@@ -7,7 +7,6 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.logging.LoggingHandler;
 
 public final class ShadowSocksRequestHandler extends ChannelInboundHandlerAdapter {
 
@@ -25,7 +24,6 @@ public final class ShadowSocksRequestHandler extends ChannelInboundHandlerAdapte
                     .handler(new RelayHandler(ctx.channel()));
             Channel outboundChannel = b.connect(request.host(), request.port()).sync().channel();
             ctx.pipeline().remove(ShadowSocksRequestHandler.this);
-            outboundChannel.pipeline().addFirst(new LoggingHandler());
             ctx.pipeline().addLast(new RelayHandler(outboundChannel));
         } else {
             // no in  here

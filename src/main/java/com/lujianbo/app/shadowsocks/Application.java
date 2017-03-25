@@ -2,7 +2,7 @@ package com.lujianbo.app.shadowsocks;
 
 import com.lujianbo.app.shadowsocks.common.crypto.ShadowSocksContext;
 import com.lujianbo.app.shadowsocks.local.connector.socks.SocksServerInitializer;
-import com.lujianbo.app.shadowsocks.local.manager.SSServerInstance;
+import com.lujianbo.app.shadowsocks.local.manager.ShadowSocksServerInfo;
 import com.lujianbo.app.shadowsocks.server.handler.ShadowSocksServerInitializer;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
@@ -21,7 +21,7 @@ public class Application {
             ProxyServer proxyServer = null;
             switch (mode) {
                 case "local":
-                    SSServerInstance instance = new SSServerInstance(config.getAddress(), config.getServerPort(), config.getMethod(), config.getPassword());
+                    ShadowSocksServerInfo instance = new ShadowSocksServerInfo(config.getAddress(), config.getServerPort(), config.getMethod(), config.getPassword());
                     proxyServer = new ProxyServer(config.getLocalPort(), new SocksServerInitializer(instance));
                     break;
                 case "server":

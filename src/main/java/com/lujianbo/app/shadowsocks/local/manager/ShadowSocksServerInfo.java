@@ -4,7 +4,7 @@ package com.lujianbo.app.shadowsocks.local.manager;
 /**
  * 服务器描述
  */
-public class SSServerInstance {
+public class ShadowSocksServerInfo {
 
     private String address;
 
@@ -14,7 +14,7 @@ public class SSServerInstance {
 
     private String password;
 
-    public SSServerInstance(String address, int port, String method, String password) {
+    public ShadowSocksServerInfo(String address, int port, String method, String password) {
         this.address = address;
         this.port = port;
         this.method = method;

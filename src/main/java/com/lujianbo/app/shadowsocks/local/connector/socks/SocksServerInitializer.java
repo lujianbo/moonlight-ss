@@ -1,7 +1,6 @@
 package com.lujianbo.app.shadowsocks.local.connector.socks;
 
-import com.lujianbo.app.shadowsocks.local.handler.ShadowSocksConnectHandler;
-import com.lujianbo.app.shadowsocks.local.manager.SSServerInstance;
+import com.lujianbo.app.shadowsocks.local.manager.ShadowSocksServerInfo;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -10,9 +9,9 @@ import io.netty.handler.codec.socks.SocksMessageEncoder;
 
 public class SocksServerInitializer extends ChannelInitializer<SocketChannel> {
 
-    private SSServerInstance instance;
+    private ShadowSocksServerInfo instance;
 
-    public SocksServerInitializer(SSServerInstance instance) {
+    public SocksServerInitializer(ShadowSocksServerInfo instance) {
         this.instance = instance;
     }
 
