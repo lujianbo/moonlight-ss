@@ -20,9 +20,9 @@ public class ShadowSocksEncoder extends ChannelOutboundHandlerAdapter {
 
     private ShadowSocksCrypto crypto;
 
-    public ShadowSocksEncoder(String password,ShadowSocksCrypto crypto) {
-        this.crypto=crypto;
-        encryptCipher = new ShadowSocksCipher(crypto.generatorIvParameter(),crypto, password, true);
+    public ShadowSocksEncoder(String password, ShadowSocksCrypto crypto) {
+        this.crypto = crypto;
+        encryptCipher = new ShadowSocksCipher(crypto.generatorIvParameter(), crypto, password, true);
     }
 
     @Override

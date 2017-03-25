@@ -1,8 +1,6 @@
 package com.lujianbo.app.shadowsocks.local.connector.socks;
 
 import com.lujianbo.app.shadowsocks.common.utils.NetUtils;
-import com.lujianbo.app.shadowsocks.local.handler.ShadowSocksConnectHandler;
-import com.lujianbo.app.shadowsocks.local.manager.SSServerInstance;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.socks.*;

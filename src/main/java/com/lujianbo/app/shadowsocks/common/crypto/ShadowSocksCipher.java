@@ -5,28 +5,22 @@ import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
-import java.security.SecureRandom;
-
 /**
  * shadow socks 加解密专用类
  */
 public class ShadowSocksCipher {
 
-    private StreamCipher streamCipher;
-
     private final byte[] iv;
-
-    private ShadowSocksCrypto shadowSocksCrypto;
-
     private final String password;
-
     private final boolean forEncryption;
+    private StreamCipher streamCipher;
+    private ShadowSocksCrypto shadowSocksCrypto;
 
     public ShadowSocksCipher(byte[] iv, ShadowSocksCrypto shadowSocksCrypto, String password, boolean forEncryption) {
         this.iv = iv;
         this.password = password;
         this.forEncryption = forEncryption;
-        this.shadowSocksCrypto=shadowSocksCrypto;
+        this.shadowSocksCrypto = shadowSocksCrypto;
         this.streamCipher = shadowSocksCrypto.getSupplier().get();
         streamCipher.init(forEncryption, new ParametersWithIV(new KeyParameter(EVP_BytesToKey(password, shadowSocksCrypto.getKeyLength())), iv));
     }

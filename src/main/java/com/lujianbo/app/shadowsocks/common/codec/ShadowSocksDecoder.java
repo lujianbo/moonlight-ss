@@ -1,7 +1,6 @@
 package com.lujianbo.app.shadowsocks.common.codec;
 
 import com.lujianbo.app.shadowsocks.common.crypto.ShadowSocksCipher;
-import com.lujianbo.app.shadowsocks.common.crypto.ShadowSocksCiphersConstant;
 import com.lujianbo.app.shadowsocks.common.crypto.ShadowSocksCrypto;
 import com.lujianbo.app.shadowsocks.common.utils.BytebufCipherUtil;
 import io.netty.buffer.ByteBuf;
@@ -13,20 +12,16 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
  */
 public class ShadowSocksDecoder extends ChannelInboundHandlerAdapter {
 
+    private final ShadowSocksCrypto crypto;
     private transient ShadowSocksCipher decryptCipher;
-
     private String password;
-
     private boolean readIV = false;
-
     private int ivLength = 16;
 
-    private final ShadowSocksCrypto crypto;
-
-    public ShadowSocksDecoder(String password,ShadowSocksCrypto crypto) {
+    public ShadowSocksDecoder(String password, ShadowSocksCrypto crypto) {
         this.password = password;
         this.ivLength = crypto.getIvLength();
-        this.crypto=crypto;
+        this.crypto = crypto;
     }
 
     @Override

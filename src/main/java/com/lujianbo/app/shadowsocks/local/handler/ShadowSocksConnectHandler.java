@@ -4,8 +4,8 @@ import com.lujianbo.app.shadowsocks.common.codec.ShadowSocksAddressType;
 import com.lujianbo.app.shadowsocks.common.codec.ShadowSocksRequest;
 import com.lujianbo.app.shadowsocks.common.crypto.ShadowSocksContext;
 import com.lujianbo.app.shadowsocks.common.handler.RelayHandler;
-import com.lujianbo.app.shadowsocks.local.manager.SSServerInstance;
 import com.lujianbo.app.shadowsocks.common.utils.NetUtils;
+import com.lujianbo.app.shadowsocks.local.manager.SSServerInstance;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -19,13 +19,12 @@ import io.netty.handler.codec.socks.*;
 public class ShadowSocksConnectHandler extends SimpleChannelInboundHandler<SocksCmdRequest> {
 
 
-
-    private static EventLoopGroup executors=new NioEventLoopGroup();
+    private static EventLoopGroup executors = new NioEventLoopGroup();
 
     private SSServerInstance instance;
 
     public ShadowSocksConnectHandler(SSServerInstance instance) {
-        this.instance=instance;
+        this.instance = instance;
     }
 
     @Override
@@ -35,33 +34,33 @@ public class ShadowSocksConnectHandler extends SimpleChannelInboundHandler<Socks
                 .channel(NioSocketChannel.class)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
                 .option(ChannelOption.SO_KEEPALIVE, true)
-                .handler(new ShadowSocksClientInitializer(new ShadowSocksContext(instance.getMethod(),instance.getPassword())));
+                .handler(new ShadowSocksClientInitializer(new ShadowSocksContext(instance.getMethod(), instance.getPassword())));
 
         //连接目标服务器
         b.connect(instance.getAddress(), instance.getPort())
                 .addListener((ChannelFutureListener) future -> {
-            if (future.isSuccess()) {
-                future.channel().pipeline().addLast(new RelayHandler(ctx.channel()));
-                ctx.channel().writeAndFlush(new SocksCmdResponse(SocksCmdStatus.SUCCESS, request.addressType()))
-                        .addListener(channelFuture -> {
-                            if (channelFuture.isSuccess()){
-                                //移除当前的处理数据
-                                ctx.pipeline().remove(ShadowSocksConnectHandler.this);
-                                ctx.pipeline().remove(SocksMessageEncoder.class);
-                                //写入request
-                                ctx.pipeline().addLast(new RelayHandler(future.channel()));
-                                future.channel().write(buildShadowSocksRequest(request));
-                            }else {
-                                NetUtils.closeOnFlush(future.channel());
-                                NetUtils.closeOnFlush(ctx.channel());
-                            }
-                        });
-            } else {
-                // Close the connection if the connection attempt has failed.
-                ctx.channel().writeAndFlush(new SocksCmdResponse(SocksCmdStatus.FAILURE, request.addressType()));
-                NetUtils.closeOnFlush(ctx.channel());
-            }
-        });
+                    if (future.isSuccess()) {
+                        future.channel().pipeline().addLast(new RelayHandler(ctx.channel()));
+                        ctx.channel().writeAndFlush(new SocksCmdResponse(SocksCmdStatus.SUCCESS, request.addressType()))
+                                .addListener(channelFuture -> {
+                                    if (channelFuture.isSuccess()) {
+                                        //移除当前的处理数据
+                                        ctx.pipeline().remove(ShadowSocksConnectHandler.this);
+                                        ctx.pipeline().remove(SocksMessageEncoder.class);
+                                        //写入request
+                                        ctx.pipeline().addLast(new RelayHandler(future.channel()));
+                                        future.channel().write(buildShadowSocksRequest(request));
+                                    } else {
+                                        NetUtils.closeOnFlush(future.channel());
+                                        NetUtils.closeOnFlush(ctx.channel());
+                                    }
+                                });
+                    } else {
+                        // Close the connection if the connection attempt has failed.
+                        ctx.channel().writeAndFlush(new SocksCmdResponse(SocksCmdStatus.FAILURE, request.addressType()));
+                        NetUtils.closeOnFlush(ctx.channel());
+                    }
+                });
     }
 
     @Override

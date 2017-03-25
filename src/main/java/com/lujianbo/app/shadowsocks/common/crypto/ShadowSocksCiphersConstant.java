@@ -1,6 +1,5 @@
 package com.lujianbo.app.shadowsocks.common.crypto;
 
-import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.engines.*;
 import org.bouncycastle.crypto.modes.CFBBlockCipher;
 import org.bouncycastle.crypto.modes.OFBBlockCipher;
@@ -8,7 +7,6 @@ import org.bouncycastle.crypto.modes.SICBlockCipher;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 
 /**
@@ -56,7 +54,7 @@ public class ShadowSocksCiphersConstant {
             CIPHERS.put(ShadowSocksCrypto.getName(), ShadowSocksCrypto);
         }
     }
-    
+
     /**
      * 判断是否存在该加密方法
      */

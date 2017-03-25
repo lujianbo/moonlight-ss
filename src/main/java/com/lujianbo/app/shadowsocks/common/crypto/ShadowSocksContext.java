@@ -16,9 +16,9 @@ public class ShadowSocksContext {
     public ShadowSocksContext(String method, String password) throws NoSuchAlgorithmException {
         this.method = method;
         this.password = password;
-        this.crypto= ShadowSocksCiphersConstant.getShadowSocksCrypto(method);
-        if (crypto==null){
-            throw new NoSuchAlgorithmException("no such Algorithm named "+method);
+        this.crypto = ShadowSocksCiphersConstant.getShadowSocksCrypto(method);
+        if (crypto == null) {
+            throw new NoSuchAlgorithmException("no such Algorithm named " + method);
         }
     }
 

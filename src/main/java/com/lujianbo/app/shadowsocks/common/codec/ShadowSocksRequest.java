@@ -40,7 +40,7 @@ public class ShadowSocksRequest {
                 byteArrayOutputStream.write(NetUtil.createByteArrayFromIpAddressString(host));
                 break;
             case hostname:
-                byteArrayOutputStream.write((byte)host.length());
+                byteArrayOutputStream.write((byte) host.length());
                 byteArrayOutputStream.write(host.getBytes(CharsetUtil.US_ASCII));
                 break;
             case IPv6:

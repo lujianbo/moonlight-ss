@@ -11,12 +11,12 @@ import io.netty.handler.logging.LoggingHandler;
 
 public final class ShadowSocksRequestHandler extends ChannelInboundHandlerAdapter {
 
-    private static EventLoopGroup executors=new NioEventLoopGroup();
+    private static EventLoopGroup executors = new NioEventLoopGroup();
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        if (msg instanceof ShadowSocksRequest){
-            ShadowSocksRequest request=(ShadowSocksRequest) msg;
+        if (msg instanceof ShadowSocksRequest) {
+            ShadowSocksRequest request = (ShadowSocksRequest) msg;
             Bootstrap b = new Bootstrap();
             b.group(executors)
                     .channel(NioSocketChannel.class)
@@ -27,7 +27,7 @@ public final class ShadowSocksRequestHandler extends ChannelInboundHandlerAdapte
             ctx.pipeline().remove(ShadowSocksRequestHandler.this);
             outboundChannel.pipeline().addFirst(new LoggingHandler());
             ctx.pipeline().addLast(new RelayHandler(outboundChannel));
-        }else{
+        } else {
             // no in  here
         }
     }

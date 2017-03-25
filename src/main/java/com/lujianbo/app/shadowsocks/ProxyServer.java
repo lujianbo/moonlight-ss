@@ -21,9 +21,9 @@ public final class ProxyServer {
 
     private int port;
 
-    public ProxyServer(int port,ChannelInitializer<SocketChannel> initializer) {
+    public ProxyServer(int port, ChannelInitializer<SocketChannel> initializer) {
         this.initializer = initializer;
-        this.port=port;
+        this.port = port;
     }
 
     public void start() {
@@ -34,9 +34,9 @@ public final class ProxyServer {
                     .handler(new LoggingHandler(LogLevel.INFO))
                     .childHandler(initializer);
             b.bind(port).sync().addListener(future -> {
-                if (future.isSuccess()){
+                if (future.isSuccess()) {
                     System.out.println("启动成功");
-                }else {
+                } else {
                     System.out.println("启动失败");
                 }
             });

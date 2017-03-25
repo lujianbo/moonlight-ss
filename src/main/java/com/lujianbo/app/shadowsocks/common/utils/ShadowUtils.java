@@ -8,6 +8,8 @@ public class ShadowUtils {
     private static final int FIRST_ADDRESS_OCTET_SHIFT = 24;
     private static final int THIRD_ADDRESS_OCTET_SHIFT = 8;
     private static final int XOR_DEFAULT_VALUE = 0xff;
+    private static final char[] ipv6conseqZeroFiller = {':', ':'};
+    private static final char ipv6hextetSeparator = ':';
 
     public static String intToIp(int i) {
         return String.valueOf(i >> FIRST_ADDRESS_OCTET_SHIFT & XOR_DEFAULT_VALUE) + '.' +
@@ -15,9 +17,6 @@ public class ShadowUtils {
                 (i >> THIRD_ADDRESS_OCTET_SHIFT & XOR_DEFAULT_VALUE) + '.' +
                 (i & XOR_DEFAULT_VALUE);
     }
-
-    private static final char[] ipv6conseqZeroFiller = {':', ':'};
-    private static final char ipv6hextetSeparator = ':';
 
     /**
      * Convert numeric IPv6 to compressed format, where
