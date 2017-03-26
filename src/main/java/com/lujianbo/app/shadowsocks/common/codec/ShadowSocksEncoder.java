@@ -7,6 +7,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
+import io.netty.util.ReferenceCountUtil;
 
 
 /**
@@ -37,6 +38,7 @@ public class ShadowSocksEncoder extends ChannelOutboundHandlerAdapter {
         ByteBuf out = ctx.alloc().buffer();
         BytebufCipherUtil.update(encryptCipher, in, out);//update 解密
         ctx.write(out);
+        ReferenceCountUtil.release(msg);
     }
 
 }

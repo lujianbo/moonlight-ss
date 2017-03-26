@@ -1,5 +1,8 @@
-package com.lujianbo.app.shadowsocks.common.codec;
+package com.lujianbo.app.shadowsocks.server.handler;
 
+import com.lujianbo.app.shadowsocks.common.codec.ShadowSocksAddressType;
+import com.lujianbo.app.shadowsocks.common.handler.ConnectRelayHandler;
+import com.lujianbo.app.shadowsocks.common.handler.DefaultChannelInitializer;
 import com.lujianbo.app.shadowsocks.common.utils.ShadowUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -11,7 +14,7 @@ import java.io.IOException;
 /**
  * Created by jianbo on 2017/3/25.
  */
-public class ShadowSocksRequestDecoder extends ChannelInboundHandlerAdapter {
+public class ShadowSocksServerDecoder extends ChannelInboundHandlerAdapter {
 
     private ShadowSocksAddressType addressType;
     private int addressLength = 1;
@@ -56,14 +59,16 @@ public class ShadowSocksRequestDecoder extends ChannelInboundHandlerAdapter {
                 address = ShadowUtils.ipv6toStr(ipv6bytes);
                 break;
             case hostname:
-                address = in.readBytes(addressLength).toString(CharsetUtil.US_ASCII);
+                byte[] hostnameBytes = new byte[addressLength];
+                in.readBytes(hostnameBytes);
+                address = new String(hostnameBytes, CharsetUtil.US_ASCII);
                 break;
             case UNKNOWN:
                 break;
         }
         int port = in.readUnsignedShort();
-        ctx.fireChannelRead(new ShadowSocksRequest(addressType, address, port));
-        ctx.pipeline().remove(ShadowSocksRequestDecoder.this);
+        ctx.pipeline().addLast(new ConnectRelayHandler(address, port, DefaultChannelInitializer::new));
+        ctx.pipeline().remove(ShadowSocksServerDecoder.this);
         ctx.fireChannelRead(in);//fire last data
     }
 

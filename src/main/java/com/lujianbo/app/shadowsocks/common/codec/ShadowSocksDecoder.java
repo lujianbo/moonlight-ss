@@ -6,6 +6,7 @@ import com.lujianbo.app.shadowsocks.common.utils.BytebufCipherUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.util.ReferenceCountUtil;
 
 /**
  * IV 作为数据开头的加密处理
@@ -32,9 +33,8 @@ public class ShadowSocksDecoder extends ChannelInboundHandlerAdapter {
                 return;
             } else {
                 readIV = true;
-                ByteBuf iv = in.readBytes(ivLength);
                 byte[] ivbytes = new byte[ivLength];
-                iv.getBytes(0, ivbytes);
+                in.readBytes(ivbytes);
                 this.decryptCipher = new ShadowSocksCipher(ivbytes, crypto, password, false);
             }
         }
@@ -43,7 +43,7 @@ public class ShadowSocksDecoder extends ChannelInboundHandlerAdapter {
             ByteBuf out = ctx.alloc().buffer();
             BytebufCipherUtil.update(decryptCipher, in, out);//update decode
             ctx.fireChannelRead(out);
-            in.release();
+            ReferenceCountUtil.release(in);
         }
     }
 

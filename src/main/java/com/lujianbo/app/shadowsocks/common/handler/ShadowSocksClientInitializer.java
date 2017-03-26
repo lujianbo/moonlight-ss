@@ -1,4 +1,4 @@
-package com.lujianbo.app.shadowsocks.local.handler;
+package com.lujianbo.app.shadowsocks.common.handler;
 
 import com.lujianbo.app.shadowsocks.common.codec.ShadowSocksCodec;
 import com.lujianbo.app.shadowsocks.common.codec.ShadowSocksRequestEncoder;

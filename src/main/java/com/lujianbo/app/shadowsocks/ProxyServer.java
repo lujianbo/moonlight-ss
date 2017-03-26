@@ -2,16 +2,14 @@ package com.lujianbo.app.shadowsocks;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.*;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import net.openhft.affinity.AffinityStrategies;
-import net.openhft.affinity.AffinityThreadFactory;
-
-import java.util.concurrent.ThreadFactory;
 
 /**
  * socks 服务器的启动类
@@ -30,7 +28,7 @@ public final class ProxyServer {
         this.port = port;
         bossGroup = new NioEventLoopGroup(1);
         //ThreadFactory threadFactory = new AffinityThreadFactory("atf_wrk", AffinityStrategies.DIFFERENT_CORE);
-        int workerSize=Runtime.getRuntime().availableProcessors();
+        int workerSize = Runtime.getRuntime().availableProcessors();
         //workerGroup = new NioEventLoopGroup(workerSize,threadFactory);
         workerGroup = new NioEventLoopGroup(workerSize);
     }
@@ -46,13 +44,7 @@ public final class ProxyServer {
                     .channel(NioServerSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
                     .childHandler(initializer);
-            b.bind(port).sync().addListener(future -> {
-                if (future.isSuccess()) {
-                    System.out.println("启动成功");
-                } else {
-                    System.out.println("启动失败");
-                }
-            });
+            b.bind(port).sync();
         } catch (Exception e) {
             e.printStackTrace();
         }
