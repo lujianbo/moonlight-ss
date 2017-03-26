@@ -27,16 +27,16 @@ public class ShadowSocksEncoder extends ChannelOutboundHandlerAdapter {
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-        ByteBuf out = ctx.alloc().buffer();
         if (!iv_sent) {
             iv_sent = true;
-            out.writeBytes(encryptCipher.getIv());
+            ByteBuf iv = ctx.alloc().buffer();
+            iv.writeBytes(encryptCipher.getIv());
+            ctx.write(iv);
         }
         ByteBuf in = (ByteBuf) msg;
-        ByteBuf temp = ctx.alloc().buffer(in.capacity());
-        BytebufCipherUtil.update(encryptCipher, in, temp);//update 解密
-        out.writeBytes(temp);
-        ctx.writeAndFlush(out);
+        ByteBuf out = ctx.alloc().buffer();
+        BytebufCipherUtil.update(encryptCipher, in, out);//update 解密
+        ctx.write(out);
     }
 
 }

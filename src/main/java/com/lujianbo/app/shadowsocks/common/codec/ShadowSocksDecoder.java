@@ -40,12 +40,10 @@ public class ShadowSocksDecoder extends ChannelInboundHandlerAdapter {
         }
         int length = in.readableBytes();
         if (length > 0) {
-            ByteBuf en = in.readBytes(length);
-            ByteBuf real = ctx.alloc().buffer();
-            ByteBuf temp = ctx.alloc().buffer(en.capacity());
-            BytebufCipherUtil.update(decryptCipher, en, temp);//update decode
-            real.writeBytes(temp);
-            ctx.fireChannelRead(real);
+            ByteBuf out = ctx.alloc().buffer();
+            BytebufCipherUtil.update(decryptCipher, in, out);//update decode
+            ctx.fireChannelRead(out);
+            in.release();
         }
     }
 
