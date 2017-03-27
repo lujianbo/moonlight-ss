@@ -3,7 +3,6 @@ package com.lujianbo.app.shadowsocks.server.handler;
 import com.lujianbo.app.shadowsocks.common.codec.ShadowSocksAddressType;
 import com.lujianbo.app.shadowsocks.common.handler.ConnectRelayHandler;
 import com.lujianbo.app.shadowsocks.common.handler.DefaultChannelInitializer;
-import com.lujianbo.app.shadowsocks.common.utils.ShadowUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

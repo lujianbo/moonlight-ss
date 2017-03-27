@@ -1,4 +1,4 @@
-package com.lujianbo.app.shadowsocks.common.utils;
+package com.lujianbo.app.shadowsocks.server.handler;
 
 import io.netty.util.internal.StringUtil;
 
