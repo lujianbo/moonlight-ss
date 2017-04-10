@@ -16,6 +16,6 @@ public class ShadowSocksServerInitializer extends ChannelInitializer<SocketChann
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
         ch.pipeline().addLast(new ShadowSocksCodec(context));
-        ch.pipeline().addLast(new ShadowSocksServerDecoder());
+        ch.pipeline().addLast(new ShadowSocksServerHandler());
     }
 }

@@ -13,7 +13,7 @@ import java.io.IOException;
 /**
  * Created by jianbo on 2017/3/25.
  */
-public class ShadowSocksServerDecoder extends ChannelInboundHandlerAdapter {
+public class ShadowSocksServerHandler extends ChannelInboundHandlerAdapter {
 
     private ShadowSocksAddressType addressType;
     private int addressLength = 1;
@@ -67,7 +67,7 @@ public class ShadowSocksServerDecoder extends ChannelInboundHandlerAdapter {
         }
         int port = in.readUnsignedShort();
         ctx.pipeline().addLast(new ConnectRelayHandler(address, port, DefaultChannelInitializer::new));
-        ctx.pipeline().remove(ShadowSocksServerDecoder.this);
+        ctx.pipeline().remove(ShadowSocksServerHandler.this);
         ctx.fireChannelRead(in);//fire last data
     }
 
